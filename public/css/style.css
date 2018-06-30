@@ -1,0 +1,148 @@
+:root {
+  --pri-color: steelblue;
+  --pri-height: 3em;
+  --pri-width: 3em;
+  --box-height: 3em;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Sizing */
+
+.smallSquare {
+  height: calc(var(--pri-height)/2);
+  width: calc(var(--pri-width)/3);
+  margin-top: calc(0.25*var(--pri-height));
+  border-radius: 5px;
+}
+
+.tallRectangle {
+  height: var(--pri-height);
+  width: calc(var(--pri-width)/3);
+  border-radius: 5px;
+}
+
+.foursRow div {
+  margin-right: calc(0.1*var(--pri-width));
+}
+
+.staticSymbol {
+  color: var(--pri-color);
+  font-size: calc(1/3*var(--pri-height));
+  /* border: 0.1em solid #aaa; */
+  height: var(--pri-height);
+  width: var(--pri-width);
+  text-align: center;
+  position: relative;
+  /* margin: auto; */
+  margin: 0.1em;
+  /* padding: 0.1em; */
+}
+
+.staticSymbol p {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: calc(var(--pri-height));
+}
+
+/* .dragOver {
+  border: 2px dashed black;
+} */
+
+.over {
+  border: 2px dashed black !important;
+}
+
+.dropZone {
+  border: 1px dashed #abc;
+}
+
+.draggable {
+  border: 1px solid #1d1d1d;
+  box-shadow: 1px 1px 1px gray;
+  opacity: 1.0;
+}
+
+.duringDrag {
+  border: 1px dotted #1d1d1d;
+  box-shadow: 0.5px 0.5px 0.5px gray;
+  opacity: 0.4;
+}
+
+.dropZone, .draggable {
+  /* font-family: "Times New Roman", Times, serif; */
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  text-align: center;
+}
+
+.openParenthesis {
+  background: url('/images/parensOpen.png') no-repeat center center;
+}
+
+.closeParenthesis {
+  background: url('/images/parensClose.png') no-repeat center center;
+}
+
+.add {
+  background: url('/images/add.png') no-repeat center center;
+}
+
+.subtract {
+  background: url('/images/subtract.png') no-repeat center center;
+}
+
+.multiply {
+  background: url('/images/multiply.png') no-repeat center center;
+}
+
+.divide {
+  background: url('/images/divide.png') no-repeat center center;
+}
+
+.operator {
+  background: url('/images/operator.png') no-repeat center center;
+}
+
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Required to make elements draggable in old WebKit */
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
+
+/*
+footer {
+  position: sticky bottom:0;
+  width: 100%;
+  height: 160px;
+  background: #6cf;
+} */
+
+.dragColumn {
+  height: 150px;
+  width: 150px;
+  float: left;
+  border: 2px solid #666666;
+  background-color: #ccc;
+  margin-right: 5px;
+  -webkit-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 3px #000;
+  -ms-box-shadow: inset 0 0 3px #000;
+  box-shadow: inset 0 0 3px #000;
+  text-align: center;
+  vertical-align: middle;
+  cursor: move;
+  margin-bottom: 5px;
+}
