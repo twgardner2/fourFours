@@ -26,8 +26,6 @@ function handleDragOver(e) {
 }
 
 function handleDragEnter(e) {
-  // var tileType;
-  // tileType = e.originalEvent.dataTransfer.getData('operatorType');
   console.log(tileType);
   if(tileType === this.dataset.operatorAccepted) {
     $(this).addClass('over');
@@ -46,10 +44,11 @@ function handleDrop(e) {
     e.stopPropagation();
   }
 
-  if (dragSourceElement != this) {
+  if (dragSourceElement != this && this.dataset.operatorAccepted === tileType) {
     this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
     console.log(e.originalEvent.dataTransfer.getData('operatorType'));
   }
+  tileType = null;
   return false;
 }
 
