@@ -49,16 +49,18 @@ function handleDrop(e) {
     // console.log(e.originalEvent.dataTransfer.getData('operatorType'));
   }
   tileType = null;
+  evalExpression();
   return false;
 }
 
-function looseJsonParse(obj){
-    return Function('"use strict";return (' + obj + ')')();
+function returnValue(lhs) {
+  return Function('"use strict";return (' + lhs + ')')();
 }
 
 function evalExpression() {
   var expression = "";
   var lhs = null;
+  var lhsEvaluated = null;
 
   $("#foursRow").children("div").each(function(index, el) {
     // console.log(el.innerHTML);
@@ -66,16 +68,22 @@ function evalExpression() {
   });
   console.log(expression);
 
-  lhs = expression.substring(0,expression.indexOf("="));
+  lhs = expression.substring(0, expression.indexOf("="));
+  lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
+
   $('#expression').text(lhs);
-  $('#evalResult').text(eval(lhs));
+  $('#evalResult').text(returnValue(lhsEvaluated));
+}
+
+function resetRow() {
+  $('.dropZone').html('').removeClass('over');
+
 }
 
 $(document).ready(function() {
-  // $(".dragColumn").css("background-color", "yellow");
-  //$('.dragColumn').on('dragstart', handleDragStart);
 
   $('#buttonEval').on('click', evalExpression);
+  $('#buttonReset').on('click', resetRow);
 
   $('.draggable').on('dragstart', handleDragStart);
   $('.draggable').on('dragend', handleDragEnd);
