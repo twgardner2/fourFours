@@ -1,34 +1,46 @@
 <div class="container">
 
-  <div class="row foursRow">
+  <div id="foursRow" class="row foursRow">
     <div class="dropZone smallSquare" data-operator-accepted="binary"></div>
     <div class="dropZone tallRectangle" data-operator-accepted="parens"></div>
 
-    <div class="staticSymbol"><p>4</p></div>
+    <div class="staticSymbol">
+      4
+    </div>
 
     <div class="dropZone smallSquare" data-operator-accepted="binary"></div>
     <div class="dropZone tallRectangle" data-operator-accepted="parens"></div>
 
 
-    <div class="staticSymbol"><p>4</p></div>
+    <div class="staticSymbol">
+      4
+    </div>
 
     <div class="dropZone tallRectangle" data-operator-accepted="parens"></div>
     <div class="dropZone tallRectangle" data-operator-accepted="parens"></div>
     <div class="dropZone smallSquare" data-operator-accepted="binary"></div>
     <div class="dropZone tallRectangle" data-operator-accepted="parens"></div>
 
-    <div class="staticSymbol"><p>4</p></div>
+    <div class="staticSymbol">
+      4
+    </div>
 
     <div class="dropZone tallRectangle" data-operator-accepted="parens"></div>
     <div class="dropZone smallSquare" data-operator-accepted="binary"></div>
 
-    <div class="staticSymbol"><p>4</p></div>
+    <div class="staticSymbol">
+      4
+    </div>
     <div class="dropZone tallRectangle" data-operator-accepted="parens"></div>
 
 
-    <div class="staticSymbol"><p>=</p></div>
+    <div class="staticSymbol">
+      =
+    </div>
 
-    <div class="staticSymbol"><p>1</p></div>
+    <div class="staticSymbol">
+      1
+    </div>
 
   </div>
 
@@ -46,6 +58,16 @@
     <div class="smallSquare tileSeparator"></div>
     <div class="draggable tallRectangle" draggable='true' data-operator-type="parens">)</div>
 
+
+
+  </div>
+
+  <div id="buttons" class="row">
+    <div class="col"><input id="buttonEval" type="button" value="Evaluate"></div>
+    <div class="col">
+      <div id="expression"></div>
+      <div id="evalResult"></div>
+    </div>
 
 
   </div>

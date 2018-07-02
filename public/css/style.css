@@ -1,8 +1,8 @@
 :root {
   --pri-color: steelblue;
-  --pri-height: 4.5em;
-  --pri-width: 4.5em;
-  --box-height: 4.5em;
+  --pri-height: 3em;
+  --pri-width: 3em;
+  --box-height: 3em;
 }
 
 * {

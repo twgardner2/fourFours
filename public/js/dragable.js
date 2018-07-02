@@ -26,8 +26,8 @@ function handleDragOver(e) {
 }
 
 function handleDragEnter(e) {
-  console.log(tileType);
-  if(tileType === this.dataset.operatorAccepted) {
+  // console.log(tileType);
+  if (tileType === this.dataset.operatorAccepted) {
     $(this).addClass('over');
   }
 
@@ -46,17 +46,36 @@ function handleDrop(e) {
 
   if (dragSourceElement != this && this.dataset.operatorAccepted === tileType) {
     this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
-    console.log(e.originalEvent.dataTransfer.getData('operatorType'));
+    // console.log(e.originalEvent.dataTransfer.getData('operatorType'));
   }
   tileType = null;
   return false;
 }
 
+function looseJsonParse(obj){
+    return Function('"use strict";return (' + obj + ')')();
+}
 
+function evalExpression() {
+  var expression = "";
+  var lhs = null;
+
+  $("#foursRow").children("div").each(function(index, el) {
+    // console.log(el.innerHTML);
+    expression += el.innerHTML;
+  });
+  console.log(expression);
+
+  lhs = expression.substring(0,expression.indexOf("="));
+  $('#expression').text(lhs);
+  $('#evalResult').text(eval(lhs));
+}
 
 $(document).ready(function() {
   // $(".dragColumn").css("background-color", "yellow");
   //$('.dragColumn').on('dragstart', handleDragStart);
+
+  $('#buttonEval').on('click', evalExpression);
 
   $('.draggable').on('dragstart', handleDragStart);
   $('.draggable').on('dragend', handleDragEnd);
