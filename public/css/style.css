@@ -3,6 +3,9 @@
   --pri-height: 3em;
   --pri-width: 3em;
   --box-height: 3em;
+
+  --color-wrong: rgba(255,   0,  0, 0.2);
+  --color-right: rgba(0  , 255,  0, 0.2);
 }
 
 * {
@@ -22,6 +25,10 @@
   height: var(--pri-height);
   width: calc(var(--pri-width)/3);
   border-radius: 5px;
+}
+.foursRow {
+  background: var(--color-right);
+
 }
 
 .foursRow div {
