@@ -27,7 +27,7 @@ function handleDragOver(e) {
 
 function handleDragEnter(e) {
   // console.log(tileType);
-  if (tileType === this.dataset.operatorAccepted) {
+  if (tileType.includes(this.dataset.operatorAccepted)) {
     $(this).addClass('over');
   }
 
@@ -44,12 +44,18 @@ function handleDrop(e) {
     e.stopPropagation();
   }
 
-  if (dragSourceElement != this && this.dataset.operatorAccepted === tileType) {
+  if (dragSourceElement != this && tileType.includes(this.dataset.operatorAccepted)) {
     this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
+    $(this).removeClass('over').addClass('dropped');
     // console.log(e.originalEvent.dataTransfer.getData('operatorType'));
   }
   tileType = null;
-  evalExpression();
+  try {
+    evalExpression();
+  }
+  catch(err) {
+    return false;
+  }
   return false;
 }
 
