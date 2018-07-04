@@ -1,6 +1,5 @@
 var activeRowId = "#foursRow1";
 
-
 var dragSourceElement = null;
 var tileType = null;
 
@@ -29,7 +28,6 @@ function handleDragOver(e) {
 }
 
 function handleDragEnter(e) {
-  // console.log(tileType);
   if (tileType.includes(this.dataset.operatorAccepted)) {
     $(this).addClass('over');
   }
@@ -37,40 +35,9 @@ function handleDragEnter(e) {
 }
 
 function handleDragLeave() {
-  // $(this).addClass('dropZone').removeClass('dragOver');
   $(this).removeClass('over');
 
 }
-
-// function handleDrop(e) {
-//   if (e.stopPropagation) {
-//     e.stopPropagation();
-//   }
-//
-//   var requiredResult;
-//   var isCorrect;
-//
-//   requiredResult = $('#requiredResult').data('value');
-//
-//   if (dragSourceElement != this && tileType.includes(this.dataset.operatorAccepted)) {
-//     this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
-//     $(this).removeClass('over').addClass('dropped');
-//   }
-//   tileType = null;
-//   try {
-//     isCorrect = evalExpression(requiredResult);
-//     if(isCorrect) {
-//       $('#foursRow').removeClass('noResult wrongResult').addClass('rightResult');
-//     } else {
-//       $('#foursRow').removeClass('noResult rightResult').addClass('wrongResult');
-//     }
-//   }
-//   catch(err) {
-//     $('#foursRow').removeClass('wrongResult').removeClass('rightResult');
-//     return false;
-//   }
-//   return false;
-// }
 
 function handleDrop(e) {
   if (e.stopPropagation) {
@@ -87,8 +54,6 @@ function handleDrop(e) {
 
   isCorrect = evalExpression();
 
-
-
   return false;
 }
 
@@ -96,30 +61,6 @@ function resetDropZone() {
   $(this).html('').removeClass('dropped');
   evalExpression();
 }
-
-// function evalExpression(requiredResult) {
-//   var expression = "";
-//   var lhs = null;
-//   var lhsEvaluated = null;
-//   var isCorrect = null;
-//
-//   $("#foursRow").children("div").each(function(index, el) {
-//     // console.log(el.innerHTML);
-//     expression += el.innerHTML;
-//   });
-//   // console.log(expression);
-//
-//   lhs = expression.substring(0, expression.indexOf("="));
-//   lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
-//
-//   $('#expression').text(lhs);
-//   // $('#evalResult').text(returnValue(lhsEvaluated));
-//   $('#evalResult').text(lhsEvaluated);
-//
-//   isCorrect = lhsEvaluated === requiredResult;
-//
-//   return isCorrect;
-// }
 
 function evalExpression() {
   // var expression = "";
@@ -181,4 +122,6 @@ $(document).ready(function() {
 
 })
 
-// function rowGenerator
+function rowGenerator(activeRowId) {
+  
+}

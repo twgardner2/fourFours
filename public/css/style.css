@@ -57,13 +57,13 @@ div {
 
 @keyframes tada_3317 {
   0% { transform: scale(1) }
-  5.55556% { transform:scale(.95) rotate(-8deg) }
-  11.11111% { transform:scale(.95) rotate(-8deg) }
-  16.66667% { transform:scale(1.05) rotate(8deg) }
-  22.22222% { transform:scale(1.05) rotate(-8deg) }
-  27.77778% { transform:scale(1.05) rotate(8deg) }
-  33.33333% { transform:scale(1.05) rotate(-8deg) }
-  38.88889% { transform:scale(1.05) rotate(8deg) }
+  5.55556% { transform:scale(.95) rotate(-6deg) }
+  11.11111% { transform:scale(.95) rotate(-6deg) }
+  16.66667% { transform:scale(1.05) rotate(6deg) }
+  22.22222% { transform:scale(1.05) rotate(-6deg) }
+  27.77778% { transform:scale(1.05) rotate(6deg) }
+  33.33333% { transform:scale(1.05) rotate(-6deg) }
+  38.88889% { transform:scale(1.05) rotate(6deg) }
   44.44444% { transform:scale(1) rotate(0) }
   100% { transform:scale(1) rotate(0) }
 }
