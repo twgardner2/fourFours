@@ -42,33 +42,53 @@ function handleDragLeave() {
 
 }
 
+// function handleDrop(e) {
+//   if (e.stopPropagation) {
+//     e.stopPropagation();
+//   }
+//
+//   var requiredResult;
+//   var isCorrect;
+//
+//   requiredResult = $('#requiredResult').data('value');
+//
+//   if (dragSourceElement != this && tileType.includes(this.dataset.operatorAccepted)) {
+//     this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
+//     $(this).removeClass('over').addClass('dropped');
+//   }
+//   tileType = null;
+//   try {
+//     isCorrect = evalExpression(requiredResult);
+//     if(isCorrect) {
+//       $('#foursRow').removeClass('noResult wrongResult').addClass('rightResult');
+//     } else {
+//       $('#foursRow').removeClass('noResult rightResult').addClass('wrongResult');
+//     }
+//   }
+//   catch(err) {
+//     $('#foursRow').removeClass('wrongResult').removeClass('rightResult');
+//     return false;
+//   }
+//   return false;
+// }
+
 function handleDrop(e) {
   if (e.stopPropagation) {
     e.stopPropagation();
   }
 
-  var requiredResult;
   var isCorrect;
-
-  requiredResult = $('#requiredResult').data('value');
 
   if (dragSourceElement != this && tileType.includes(this.dataset.operatorAccepted)) {
     this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
     $(this).removeClass('over').addClass('dropped');
   }
   tileType = null;
-  try {
-    isCorrect = evalExpression(requiredResult);
-    if(isCorrect) {
-      $('#foursRow').removeClass('noResult wrongResult').addClass('rightResult');
-    } else {
-      $('#foursRow').removeClass('noResult rightResult').addClass('wrongResult');
-    }
-  }
-  catch(err) {
-    $('#foursRow').removeClass('wrongResult').removeClass('rightResult');
-    return false;
-  }
+
+  isCorrect = evalExpression();
+
+
+
   return false;
 }
 
@@ -77,33 +97,72 @@ function resetDropZone() {
   evalExpression();
 }
 
-function evalExpression(requiredResult) {
-  var expression = "";
-  var lhs = null;
+// function evalExpression(requiredResult) {
+//   var expression = "";
+//   var lhs = null;
+//   var lhsEvaluated = null;
+//   var isCorrect = null;
+//
+//   $("#foursRow").children("div").each(function(index, el) {
+//     // console.log(el.innerHTML);
+//     expression += el.innerHTML;
+//   });
+//   // console.log(expression);
+//
+//   lhs = expression.substring(0, expression.indexOf("="));
+//   lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
+//
+//   $('#expression').text(lhs);
+//   // $('#evalResult').text(returnValue(lhsEvaluated));
+//   $('#evalResult').text(lhsEvaluated);
+//
+//   isCorrect = lhsEvaluated === requiredResult;
+//
+//   return isCorrect;
+// }
+
+function evalExpression() {
+  // var expression = "";
+  var lhs = '';
   var lhsEvaluated = null;
+  var requiredResult = null;
   var isCorrect = null;
 
-  $("#foursRow").children("div").each(function(index, el) {
-    // console.log(el.innerHTML);
-    expression += el.innerHTML;
+  $(activeRowId).children("div").each(function(index, el) {
+    // expression += el.innerHTML;
+    lhs += el.innerHTML;
   });
-  // console.log(expression);
+  lhs = lhs.substring(0, lhs.indexOf("="));
 
-  lhs = expression.substring(0, expression.indexOf("="));
-  lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
+  try {
+    lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
+    $('#expression').text(lhs);
+    $('#evalResult').text(lhsEvaluated);
 
-  $('#expression').text(lhs);
-  // $('#evalResult').text(returnValue(lhsEvaluated));
-  $('#evalResult').text(lhsEvaluated);
+    requiredResult = $(activeRowId).children('#requiredResult').data('value');
+    isCorrect = lhsEvaluated === requiredResult;
 
-  isCorrect = lhsEvaluated === requiredResult;
+    if (isCorrect === true) {
+      $(activeRowId).removeClass('noResult wrongResult').addClass('rightResult');
+    } else if (isCorrect === false) {
+      $(activeRowId).removeClass('noResult rightResult').addClass('wrongResult');
+    }
 
-  return isCorrect;
+    return isCorrect;
+  }
+  catch(error) {
+    $('#expression').text(lhs);
+
+    $(activeRowId).removeClass('rightResult wrongResult').addClass('noResult');
+
+    return undefined;
+
+  }
 }
 
 function resetRow() {
   $('.dropZone').html('').removeClass('over').removeClass('dropped');
-  $('#foursRow').removeClass('rightResult').removeClass('wrongResult');
+  $(activeRowId).removeClass('rightResult').removeClass('wrongResult');
 
 }
 
