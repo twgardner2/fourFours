@@ -143,18 +143,16 @@ function evalExpression() {
     isCorrect = lhsEvaluated === requiredResult;
 
     if (isCorrect === true) {
-      $(activeRowId).removeClass('noResult wrongResult').addClass('rightResult');
+      $(activeRowId).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
     } else if (isCorrect === false) {
-      $(activeRowId).removeClass('noResult rightResult').addClass('wrongResult');
+      $(activeRowId).removeClass('noResult rightResult tada wrongResult horizontal').addClass('wrongResult horizontal');
     }
 
     return isCorrect;
   }
   catch(error) {
     $('#expression').text(lhs);
-
-    $(activeRowId).removeClass('rightResult wrongResult').addClass('noResult');
-
+    $(activeRowId).removeClass('rightResult tada wrongResult horizontal').addClass('noResult');
     return undefined;
 
   }
@@ -182,3 +180,5 @@ $(document).ready(function() {
   $('.dropZone').on('drop', handleDrop);
 
 })
+
+// function rowGenerator

@@ -3,7 +3,7 @@
   --pri-height: 3em;
   --pri-width: 3em;
   --box-height: 3em;
-  --color-wrong: rgba(255, 0, 0, 0.2);
+  --color-wrong: rgba(255, 0, 0, 0.15);
   --color-right: rgba(0, 255, 0, 0.2);
   --color-noResult: rgba(240, 240, 240, 1.0)
 }
@@ -36,9 +36,52 @@ body {
 }
 
 /*       */
-
+div {
+  -webkit-animation-iteration-count: 1;
+  animation-iteration-count: 1;
+}
 .rightResult {
   background: var(--color-right);
+  /* animation: pulse 1s infinite; */
+  /* animation-name: pulse_animation;
+  animation-duration: 2000 ms;
+  transform-origin: 70% 70%;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; */
+}
+
+.tada {
+  animation: tada_3317 1s linear 1;
+  transform-origin: 50% 50%;
+}
+
+@keyframes tada_3317 {
+  0% { transform: scale(1) }
+  5.55556% { transform:scale(.95) rotate(-8deg) }
+  11.11111% { transform:scale(.95) rotate(-8deg) }
+  16.66667% { transform:scale(1.05) rotate(8deg) }
+  22.22222% { transform:scale(1.05) rotate(-8deg) }
+  27.77778% { transform:scale(1.05) rotate(8deg) }
+  33.33333% { transform:scale(1.05) rotate(-8deg) }
+  38.88889% { transform:scale(1.05) rotate(8deg) }
+  44.44444% { transform:scale(1) rotate(0) }
+  100% { transform:scale(1) rotate(0) }
+}
+
+.horizontal {
+  animation: horizontal_6114 1s ease 1;
+  transform-origin: 50% 50%;
+}
+
+@keyframes horizontal_6114 {
+  0% { transform:translate(0,0) }
+  4.41177% { transform:translate(5px,0) }
+  8.82353% { transform:translate(0,0) }
+  13.23529% { transform:translate(5px,0) }
+  17.64706% { transform:translate(0,0) }
+  22.05882% { transform:translate(5px,0) }
+  26.47059% { transform:translate(0,0) }
+  100% { transform:translate(0,0) }
 }
 
 .wrongResult {
@@ -47,6 +90,7 @@ body {
 
 .noResult {
   background: var(--color-noResult);
+  /* background: whitesmoke; */
 }
 
 .foursRow {
@@ -54,6 +98,7 @@ body {
   border-radius: 10px;
   border: 1px solid #1d1d1d;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+  transition: background 200ms;
 
 }
 
