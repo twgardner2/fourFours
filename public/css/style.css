@@ -3,13 +3,21 @@
   --pri-height: 3em;
   --pri-width: 3em;
   --box-height: 3em;
-
-  --color-wrong: rgba(255,   0,  0, 0.2);
-  --color-right: rgba(0  , 255,  0, 0.2);
+  --color-wrong: rgba(255, 0, 0, 0.2);
+  --color-right: rgba(0, 255, 0, 0.2);
+  --color-noResult: rgba(240, 240, 240, 1.0)
 }
 
 * {
   box-sizing: border-box;
+}
+
+body {
+  background: rgba(230, 230, 230, 1);
+}
+
+.disabled {
+  pointer-events: none;
 }
 
 /* Sizing */
@@ -26,8 +34,26 @@
   width: calc(var(--pri-width)/3);
   border-radius: 5px;
 }
-.foursRow {
+
+/*       */
+
+.rightResult {
   background: var(--color-right);
+}
+
+.wrongResult {
+  background: var(--color-wrong);
+}
+
+.noResult {
+  background: var(--color-noResult);
+}
+
+.foursRow {
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #1d1d1d;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
 
 }
 
@@ -73,14 +99,14 @@
 
 .draggable {
   border: 1px solid #1d1d1d;
-  box-shadow: 0px 1px 2px rgba(0,0,0,0.25);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
   opacity: 1.0;
   transition: transform 200ms, box-shadow 200ms;
 }
 
 .draggable:hover {
   transform: scale(1.1);
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.25);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
 }
 
 .duringDrag {
@@ -91,7 +117,6 @@
 
 .dropped {
   border: 1px solid #1d1d1d;
-
 }
 
 .dropZone, .draggable {

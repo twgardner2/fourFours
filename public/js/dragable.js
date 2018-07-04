@@ -1,3 +1,6 @@
+var activeRowId = "#foursRow1";
+
+
 var dragSourceElement = null;
 var tileType = null;
 
@@ -44,45 +47,63 @@ function handleDrop(e) {
     e.stopPropagation();
   }
 
+  var requiredResult;
+  var isCorrect;
+
+  requiredResult = $('#requiredResult').data('value');
+
   if (dragSourceElement != this && tileType.includes(this.dataset.operatorAccepted)) {
     this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
     $(this).removeClass('over').addClass('dropped');
-    // console.log(e.originalEvent.dataTransfer.getData('operatorType'));
   }
   tileType = null;
   try {
-    evalExpression();
+    isCorrect = evalExpression(requiredResult);
+    if(isCorrect) {
+      $('#foursRow').removeClass('noResult wrongResult').addClass('rightResult');
+    } else {
+      $('#foursRow').removeClass('noResult rightResult').addClass('wrongResult');
+    }
   }
   catch(err) {
+    $('#foursRow').removeClass('wrongResult').removeClass('rightResult');
     return false;
   }
   return false;
 }
 
-function returnValue(lhs) {
-  return Function('"use strict";return (' + lhs + ')')();
+function resetDropZone() {
+  $(this).html('').removeClass('dropped');
+  evalExpression();
 }
 
-function evalExpression() {
+function evalExpression(requiredResult) {
   var expression = "";
   var lhs = null;
   var lhsEvaluated = null;
+  var isCorrect = null;
 
   $("#foursRow").children("div").each(function(index, el) {
     // console.log(el.innerHTML);
     expression += el.innerHTML;
   });
-  console.log(expression);
+  // console.log(expression);
 
   lhs = expression.substring(0, expression.indexOf("="));
   lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
 
   $('#expression').text(lhs);
-  $('#evalResult').text(returnValue(lhsEvaluated));
+  // $('#evalResult').text(returnValue(lhsEvaluated));
+  $('#evalResult').text(lhsEvaluated);
+
+  isCorrect = lhsEvaluated === requiredResult;
+
+  return isCorrect;
 }
 
 function resetRow() {
-  $('.dropZone').html('').removeClass('over');
+  $('.dropZone').html('').removeClass('over').removeClass('dropped');
+  $('#foursRow').removeClass('rightResult').removeClass('wrongResult');
 
 }
 
@@ -90,6 +111,9 @@ $(document).ready(function() {
 
   $('#buttonEval').on('click', evalExpression);
   $('#buttonReset').on('click', resetRow);
+
+  $('.dropZone').on('click', resetDropZone);
+
 
   $('.draggable').on('dragstart', handleDragStart);
   $('.draggable').on('dragend', handleDragEnd);
