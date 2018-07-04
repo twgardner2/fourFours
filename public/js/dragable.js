@@ -1,4 +1,6 @@
+var activeRow = 1;
 var activeRowId = "#foursRow1";
+console.log(activeRow)
 
 var dragSourceElement = null;
 var tileType = null;
@@ -107,6 +109,10 @@ function resetRow() {
 
 $(document).ready(function() {
 
+  // $('#startButton').on('click', function() {console.log(rowGenerator())});
+
+  $('#startButton').on('click', rowGenerator);
+
   $('#buttonEval').on('click', evalExpression);
   $('#buttonReset').on('click', resetRow);
 
@@ -122,6 +128,55 @@ $(document).ready(function() {
 
 })
 
-function rowGenerator(activeRowId) {
-  
+function rowGenerator() {
+
+  activeRow++;
+  activeRowId = `foursRow${activeRow}`;
+
+  newRowHTML = `  <div id="foursRow${activeRow}" class="row foursRow noResult"> \
+      <div class="dropZone smallSquare" data-operator-accepted="binary" data-value=""></div> \
+      <div class="dropZone tallRectangle" data-operator-accepted="parensOpen" data-value=""></div> \
+
+      <div class="staticSymbol" data-value="4"> \
+        4 \
+      </div> \
+
+      <div class="dropZone smallSquare" data-operator-accepted="binary" data-value=""></div> \
+      <div class="dropZone tallRectangle" data-operator-accepted="parensOpen" data-value=""></div> \
+
+
+      <div class="staticSymbol" data-value="4"> \
+        4 \
+      </div> \
+
+      <div class="dropZone tallRectangle" data-operator-accepted="parens" data-value=""></div> \
+      <div class="dropZone tallRectangle" data-operator-accepted="parens" data-value=""></div> \
+      <div class="dropZone smallSquare" data-operator-accepted="binary" data-value=""></div> \
+      <div class="dropZone tallRectangle" data-operator-accepted="parens" data-value=""></div> \
+
+      <div class="staticSymbol" data-value="4"> \
+        4 \
+      </div> \
+
+      <div class="dropZone tallRectangle" data-operator-accepted="parens" data-value=""></div> \
+      <div class="dropZone smallSquare" data-operator-accepted="binary" data-value=""></div> \
+
+      <div class="staticSymbol" data-value="4"> \
+        4 \
+      </div> \
+      <div class="dropZone tallRectangle" data-operator-accepted="parensClose" data-value=""></div> \
+
+
+      <div class="staticSymbol" data-value="="> \
+        = \
+      </div> \
+
+      <div id="requiredResult" class="staticSymbol" data-value="${activeRow}"> \
+        ${activeRow} \
+      </div> \
+
+    </div>`
+
+    return newRowHTML;
+
 }
