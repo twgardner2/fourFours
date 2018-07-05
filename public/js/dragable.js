@@ -130,9 +130,11 @@ function attachDragDropEventListeners() {
 function playButtonClick() {
   insertRow();
   $(this).hide();
+  $('#operatorTiles').show();
 }
 
 $(document).ready(function() {
+
 
   $('#startButton').on('click', playButtonClick);
   // $('#buttonEval').on('click', evalExpression);
