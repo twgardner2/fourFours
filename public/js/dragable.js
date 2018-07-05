@@ -6,6 +6,7 @@ var dragSourceElement = null;
 var tileType = null;
 
 function handleDragStart(e) {
+  // console.log(`running 'handleDragStart'...`);
   $(this).addClass('duringDrag').removeClass('draggable');
 
   dragSourceElement = this;
@@ -16,11 +17,13 @@ function handleDragStart(e) {
 }
 
 function handleDragEnd() {
-  $(this).addClass('draggable').removeClass('duringDrag');
+  // console.log(`running 'handleDragEnd'...`);
 
+  $(this).addClass('draggable').removeClass('duringDrag');
 }
 
 function handleDragOver(e) {
+  // console.log(`running 'handleDragOver'...`);
 
   if (e.preventDefault) {
     e.preventDefault();
@@ -30,6 +33,8 @@ function handleDragOver(e) {
 }
 
 function handleDragEnter(e) {
+  // console.log(`running 'handleDragEnter'...`);
+
   if (tileType.includes(this.dataset.operatorAccepted)) {
     $(this).addClass('over');
   }
@@ -37,17 +42,20 @@ function handleDragEnter(e) {
 }
 
 function handleDragLeave() {
-  $(this).removeClass('over');
+  // console.log(`running 'handleDragLeave'...`);
 
+  $(this).removeClass('over');
 }
 
 function handleDrop(e) {
+  console.log(`running 'handleDrop'...`);
+
   if (e.stopPropagation) {
     e.stopPropagation();
   }
 
   var isCorrect;
-
+  console.log(this);
   if (dragSourceElement != this && tileType.includes(this.dataset.operatorAccepted)) {
     this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
     $(this).removeClass('over').addClass('dropped');
@@ -65,7 +73,8 @@ function resetDropZone() {
 }
 
 function evalExpression() {
-  // var expression = "";
+  console.log(`running 'evalExpression'...activeRowId: ${activeRowId}`);
+
   var lhs = '';
   var lhsEvaluated = null;
   var requiredResult = null;
@@ -76,24 +85,25 @@ function evalExpression() {
     lhs += el.innerHTML;
   });
   lhs = lhs.substring(0, lhs.indexOf("="));
-
+  console.log(lhs);
   try {
     lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
     $('#expression').text(lhs);
     $('#evalResult').text(lhsEvaluated);
 
     requiredResult = $(activeRowId).children('#requiredResult').data('value');
+    console.log(`Required result: ${requiredResult}`);
     isCorrect = lhsEvaluated === requiredResult;
 
     if (isCorrect === true) {
       $(activeRowId).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
+      insertRow();
     } else if (isCorrect === false) {
       $(activeRowId).removeClass('noResult rightResult tada wrongResult horizontal').addClass('wrongResult horizontal');
     }
 
     return isCorrect;
-  }
-  catch(error) {
+  } catch (error) {
     $('#expression').text(lhs);
     $(activeRowId).removeClass('rightResult tada wrongResult horizontal').addClass('noResult');
     return undefined;
@@ -107,18 +117,7 @@ function resetRow() {
 
 }
 
-$(document).ready(function() {
-
-  // $('#startButton').on('click', function() {console.log(rowGenerator())});
-
-  $('#startButton').on('click', rowGenerator);
-
-  $('#buttonEval').on('click', evalExpression);
-  $('#buttonReset').on('click', resetRow);
-
-  $('.dropZone').on('click', resetDropZone);
-
-
+function attachDragDropEventListeners() {
   $('.draggable').on('dragstart', handleDragStart);
   $('.draggable').on('dragend', handleDragEnd);
   $('.dropZone').on('dragover', handleDragOver);
@@ -126,12 +125,31 @@ $(document).ready(function() {
   $('.dropZone').on('dragleave', handleDragLeave);
   $('.dropZone').on('drop', handleDrop);
 
+  $('.dropZone').on('click', resetDropZone);
+}
+
+$(document).ready(function() {
+
+  // $('#startButton').on('click', function() {console.log(rowGenerator())});
+
+  $('#startButton').on('click', insertRow);
+
+  $('#buttonEval').on('click', evalExpression);
+  $('#buttonReset').on('click', resetRow);
+
+  attachDragDropEventListeners()
+
 })
 
-function rowGenerator() {
-
+function insertRow() {
+  $(activeRowId).addClass('disabled');
   activeRow++;
-  activeRowId = `foursRow${activeRow}`;
+  activeRowId = `#foursRow${activeRow}`;
+  $('#operatorTiles').before(rowGenerator());
+  attachDragDropEventListeners();
+}
+
+function rowGenerator() {
 
   newRowHTML = `  <div id="foursRow${activeRow}" class="row foursRow noResult"> \
       <div class="dropZone smallSquare" data-operator-accepted="binary" data-value=""></div> \
@@ -177,6 +195,6 @@ function rowGenerator() {
 
     </div>`
 
-    return newRowHTML;
+  return newRowHTML;
 
 }
