@@ -22,6 +22,10 @@ body {
 
 /* Sizing */
 
+.gameContainer{
+  max-width: 720px;
+}
+
 .smallSquare {
   height: calc(var(--pri-height)/2);
   width: calc(var(--pri-width)/3);

@@ -1,6 +1,5 @@
-var activeRow = 1;
-var activeRowId = "#foursRow1";
-console.log(activeRow)
+var activeRow = 0;
+var activeRowId = "#foursRow0";
 
 var dragSourceElement = null;
 var tileType = null;
@@ -128,14 +127,16 @@ function attachDragDropEventListeners() {
   $('.dropZone').on('click', resetDropZone);
 }
 
+function playButtonClick() {
+  insertRow();
+  $(this).hide();
+}
+
 $(document).ready(function() {
 
-  // $('#startButton').on('click', function() {console.log(rowGenerator())});
-
-  $('#startButton').on('click', insertRow);
-
-  $('#buttonEval').on('click', evalExpression);
-  $('#buttonReset').on('click', resetRow);
+  $('#startButton').on('click', playButtonClick);
+  // $('#buttonEval').on('click', evalExpression);
+  // $('#buttonReset').on('click', resetRow);
 
   attachDragDropEventListeners()
 
