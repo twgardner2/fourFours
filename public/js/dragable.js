@@ -1,3 +1,6 @@
+// To Do:
+// Change dropZone display to an image
+
 var activeRow = 0;
 var activeRowId = "#foursRow0";
 
@@ -11,6 +14,8 @@ function handleDragStart(e) {
   dragSourceElement = this;
   e.originalEvent.dataTransfer.effectAllowed = 'move';
   e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
+  e.originalEvent.dataTransfer.setData('text/plain', this.dataset.value);
+
   e.originalEvent.dataTransfer.setData('operatorType', this.dataset.operatorType);
   tileType = this.dataset.operatorType;
 }
@@ -57,6 +62,7 @@ function handleDrop(e) {
   console.log(this);
   if (dragSourceElement != this && tileType.includes(this.dataset.operatorAccepted)) {
     this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
+    this.dataset.value = e.originalEvent.dataTransfer.getData('text/plain');
     $(this).removeClass('over').addClass('dropped');
   }
   tileType = null;
