@@ -10,21 +10,25 @@
 
   <div id='operatorTiles' class="row dragTiles" style="display: none;">
 
-    <div class="draggable smallSquare" draggable='true' data-operator-type="binary" data-value="+">+</div>
-    <div class="smallSquare tileSeparator"></div>
-    <div class="draggable smallSquare" draggable='true' data-operator-type="binary" data-value="-">-</div>
-    <div class="smallSquare tileSeparator"></div>
-    <div class="draggable smallSquare" draggable='true' data-operator-type="binary" data-value="*">*</div>
-    <div class="smallSquare tileSeparator"></div>
-    <div class="draggable smallSquare" draggable='true' data-operator-type="binary" data-value="/">/</div>
-    <div class="smallSquare tileSeparator"></div>
+    <div class="draggable plus" draggable='true' data-operator-type="binary" data-value="+">+</div>
+    <div class="tileSeparator"></div>
+    <div class="draggable minus" draggable='true' data-operator-type="binary" data-value="-">-</div>
+    <div class="tileSeparator"></div>
+    <div class="draggable multiply" draggable='true' data-operator-type="binary" data-value="*">x</div>
+    <div class="tileSeparator"></div>
+    <div class="draggable divide" draggable='true' data-operator-type="binary" data-value="/">/</div>
+    <div class="tileSeparator"></div>
     <div class="draggable tallRectangle" draggable='true' data-operator-type="parensOpen" data-value="(">(</div>
-    <div class="smallSquare tileSeparator"></div>
+    <div class="tileSeparator"></div>
     <div class="draggable tallRectangle" draggable='true' data-operator-type="parensClose" data-value=")">)</div>
+    <div class="tileSeparator"></div>
+    <div class="draggable exponentSquare" draggable='true' data-operator-type="exponent" data-value="**2">2</div>
+    <div class="tileSeparator"></div>
+    <div class="draggable exponentSquare" draggable='true' data-operator-type="exponent" data-value="**(1/2)">1/2</div>
 
   </div>
 
-  <!-- <div id="buttons" class="row">
+  <div id="buttons" class="row">
     <div class="col">
       <input id="buttonEval" type="button" value="Evaluate">
       <input id="buttonReset" type="button" value="Reset">
@@ -36,8 +40,12 @@
     </div>
 
 
-  </div> -->
+  </div>
 
-
+  <div id="testGrid">
+    <div id="item1">Item 1</div>
+    <div id="item2">Item 2</div>
+    <div id="item3">Item 3</div>
+  </div>
 
 </div>

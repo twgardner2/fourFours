@@ -20,9 +20,8 @@
   <script type="text/javascript" src='/DataTables/datatables.min.js'></script>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Orbitron|Playfair+Display+SC" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Pacifico|Roboto|Dancing+Script|Markazi+Text|Orbitron|Playfair+Display+SC" rel="stylesheet">
+
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
 
@@ -30,6 +29,15 @@
   <script type="text/javascript" src="/js/dragable.js"></script>
   <!-- Custom CSS -->
   <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+
+  <script type="text/javascript">
+    $('body').on('dragover', "drag_over(event)");
+    $('body').on('drop', "drop(event)");
+    // document.body.addEventListener('dragover', "drag_over(event)");
+    // document.body.addEventListener('drop', "drop(event)");
+  </script>
+
 
 </head>
 
@@ -46,7 +54,7 @@
     <!-- <div class="container"> -->
       <div class="">
 
-        <h1 id='textFour' class="display-1" data-content='Four'>Four</h1>
+        <h1 id='textFour' class="display-1" data-content='√Four'>Four</h1>
         <h1 id="textFours" class="display-1" data-content='Fours'>Fours</h1>
         <p class="lead">A Math Game</p>
       </div>

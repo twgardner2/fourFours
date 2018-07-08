@@ -1,19 +1,35 @@
 :root {
   --pri-color: steelblue;
-  --pri-height: 3em;
-  --pri-width: 3em;
-  --box-height: 3em;
+  /* --pri-height: 2em;
+  --pri-width: 2em;
+  --box-height: 1em; */
   --color-wrong: rgba(255, 0, 0, 0.15);
   --color-right: rgba(0, 255, 0, 0.2);
-  --color-noResult: rgba(240, 240, 240, 1.0);
+  --color-noResult: rgba(230, 230, 230, 1.0);
+  --color-highlightDropZone: rgba(255, 255, 255, 1.0);
   --color-textShadow: #446688;
 
   --color-background: rgba(230,230, 230, 1);
+
+  --grid-parensWidth: 0.75fr;
+  --grid-binaryWidth: 1.00fr;
+  --grid-fourWidth:   2.50fr;
+  --grid-expWidth:    0.75fr;
+
+  --grid-equalsWidth: 2.50fr;
+  --grid-resultWidth: 1.50fr;
 }
+
+
 
 * {
   box-sizing: border-box;
 }
+
+@font-face {
+    font-family: "Computer Modern";
+    src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunss.otf');
+  }
 
 body {
   background: var(--color-background);
@@ -23,25 +39,137 @@ body {
   pointer-events: none;
 }
 
+
+/* Grid Layout */
+
+.foursRow {
+  margin: 10px;
+  padding: 15px;
+  border-radius: 10px;
+  border: 2px solid #1d1d1d;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+  transition: background 200ms;
+
+  height: 150px;
+  width: 720px;
+  display: grid;
+  grid-gap: 2px 2px;
+  grid-template-columns: var(--grid-parensWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-parensWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-parensWidth) var(--grid-binaryWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-parensWidth) var(--grid-equalsWidth) var(--grid-resultWidth);
+  grid-template-rows: 0.05fr 0.075fr 0.05fr 0.10fr 1fr 0.075fr 0.075fr;
+  grid-template-areas:
+  ".  .     e1 .  .  .     e2 .  .  .  .     e3 .  .  .     e4 .  .      .     "
+  "p1 .     e1 .  p2 .     e2 p3 .  p4 .     e3 p5 .  .     e4 p6 .      .     "
+  "p1 four1 e1 .  p2 four2 e2 p3 .  p4 four3 e3 p5 .  four4 e4 p6 .      result"
+  "p1 four1 e1 .  p2 four2 e2 p3 .  p4 four3 e3 p5 .  four4 e4 p6 .      result"
+  "p1 four1 .  b1 p2 four2 .  p3 b2 p4 four3 .  p5 b3 four4 .  p6 equals result"
+  "p1 four1 .  .  p2 four2 .  p3 .  p4 four3 .  p5 .  four4 .  p6 .      result"
+  "p1 .     .  .  p2 .     .  p3 .  p4 .     .  p5 .  .     .  p6 .      .     ";
+}
+
+.four2 {
+  grid-area: four2;
+}
+
+.four1 {
+  grid-area: four1;
+}
+
+.e2 {
+  grid-area: e2;
+}
+
+.e1 {
+  grid-area: e1;
+}
+
+.b2 {
+  grid-area: b2;
+}
+
+.b1 {
+  grid-area: b1;
+}
+
+.four3 {
+  grid-area: four3;
+}
+
+.p1 {
+  grid-area: p1;
+}
+
+.p2 {
+  grid-area: p2;
+}
+
+.p3 {
+  grid-area: p3;
+}
+
+.p4 {
+  grid-area: p4;
+}
+
+.e3 {
+  grid-area: e3;
+}
+
+.p5 {
+  grid-area: p5;
+}
+
+.b3 {
+  grid-area: b3;
+}
+
+.four4 {
+  grid-area: four4;
+}
+
+.e4 {
+  grid-area: e4;
+}
+
+.p6 {
+  grid-area: p6;
+}
+
+.result {
+  grid-area: result;
+}
+
+.equals {
+  grid-area: equals;
+}
+
+
+/* ^^^Grid Layout^^^ */
+
+
+/* Background Images */
+.staticFour {
+  background: url('/images/four.png') no-repeat center center;
+  background-size: cover;
+}
+
+.plus {
+  background: url('/images/plus.png') no-repeat center center;
+  background-size: cover;
+}
+
+.equals {
+  background: url('/images/equals.png') no-repeat center center;
+  background-size: cover;
+}
+
+
 /* Sizing */
 
 .gameContainer{
   max-width: 720px;
-
 }
 
-.smallSquare {
-  height: calc(var(--pri-height)/2);
-  width: calc(var(--pri-width)/3);
-  margin-top: calc(0.25*var(--pri-height));
-  border-radius: 5px;
-}
 
-.tallRectangle {
-  height: var(--pri-height);
-  width: calc(var(--pri-width)/3);
-  border-radius: 5px;
-}
 
 /*       */
 div {
@@ -80,14 +208,13 @@ div {
   text-align: center;
 }
 
+#operatorTiles, .foursRow {
+  font-family: 'Markazi Text', serif;
+  font-size: 30px;
+}
+
 .rightResult {
   background: var(--color-right);
-  /* animation: pulse 1s infinite; */
-  /* animation-name: pulse_animation;
-  animation-duration: 2000 ms;
-  transform-origin: 70% 70%;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear; */
 }
 
 .tada {
@@ -132,43 +259,70 @@ div {
   background: var(--color-noResult);
 }
 
-.foursRow {
-  margin: 10px;
-  padding: 15px;
-  border-radius: 10px;
-  border: 2px solid #1d1d1d;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
-  transition: background 200ms;
 
+
+
+
+
+
+/* #item1 {
+  background: maroon;
+
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 1;
+  grid-row-end: 1;
 }
+#item2 {
+  background: white;
 
-.foursRow div {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 2;
+}
+#item3 {
+  background: orange;
+
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: 3;
+  grid-row-end: 3;
+} */
+
+
+
+
+
+/* .foursRow div {
   margin-right: calc(0.1*var(--pri-width));
-}
+} */
 
 .staticSymbol {
   color: var(--pri-color);
-  font-size: calc(0.4*var(--pri-height));
+  /* font-size: calc(0.7*var(--pri-height));
   height: var(--pri-height);
-  width: var(--pri-width);
+  width: var(--pri-width); */
   text-align: center;
   position: relative;
   margin: 0.1em;
+
+  /* border: 1px solid black; */
 }
 
-.staticSymbol p {
+/* .staticSymbol p {
   margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: calc(var(--pri-height));
-}
-
+} */
 
 .over {
   border: 1px dashed black !important;
   transform: scale(1.1);
+  background: var(--color-highlightDropZone);
 }
 
 .dropZone {
@@ -177,7 +331,7 @@ div {
 }
 
 .draggable {
-  border: 1px solid #1d1d1d;
+  border: 2px solid #1d1d1d;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
   opacity: 1.0;
   transition: transform 200ms, box-shadow 200ms;
@@ -200,7 +354,7 @@ div {
 
 .dropZone, .draggable {
   /* font-family: "Times New Roman", Times, serif; */
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif; */
   font-weight: bold;
   text-align: center;
 }

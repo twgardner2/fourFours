@@ -11,6 +11,10 @@ module.exports = {
 
   dragable: (req, res) => {
     res.render('dragable.ejs');
+  },
+
+  dragTest: (req, res) => {
+    res.render('dragTest.ejs');
   }
 
 }
