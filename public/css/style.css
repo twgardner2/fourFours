@@ -3,33 +3,31 @@
   /* --pri-height: 2em;
   --pri-width: 2em;
   --box-height: 1em; */
+  --color-operatorTilesBackground: #e7eccc;
   --color-wrong: rgba(255, 0, 0, 0.15);
   --color-right: rgba(0, 255, 0, 0.2);
   --color-noResult: rgba(230, 230, 230, 1.0);
   --color-highlightDropZone: rgba(255, 255, 255, 1.0);
   --color-textShadow: #446688;
+  --color-background: rgba(230, 230, 230, 1);
 
-  --color-background: rgba(230,230, 230, 1);
-
-  --grid-parensWidth: 0.75fr;
+  --grid-parensWidth: 1.25fr;
   --grid-binaryWidth: 1.00fr;
-  --grid-fourWidth:   2.50fr;
-  --grid-expWidth:    0.75fr;
-
+  --grid-fourWidth: 2.50fr;
+  --grid-expWidth: 0.75fr;
   --grid-equalsWidth: 2.50fr;
   --grid-resultWidth: 1.50fr;
+  --grid-scalar: 0.5;
 }
-
-
 
 * {
   box-sizing: border-box;
 }
 
 @font-face {
-    font-family: "Computer Modern";
-    src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunss.otf');
-  }
+  font-family: "Computer Modern";
+  src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunss.otf');
+}
 
 body {
   background: var(--color-background);
@@ -38,7 +36,6 @@ body {
 .disabled {
   pointer-events: none;
 }
-
 
 /* Grid Layout */
 
@@ -49,18 +46,17 @@ body {
   border: 2px solid #1d1d1d;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
   transition: background 200ms;
-
   height: 150px;
   width: 720px;
   display: grid;
   grid-gap: 2px 2px;
   grid-template-columns: var(--grid-parensWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-parensWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-parensWidth) var(--grid-binaryWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-parensWidth) var(--grid-equalsWidth) var(--grid-resultWidth);
-  grid-template-rows: 0.05fr 0.075fr 0.05fr 0.10fr 1fr 0.075fr 0.075fr;
+  grid-template-rows: 0.05fr 0.075fr 0.25fr 0.10fr 1fr 0.05fr 0.075fr;
   grid-template-areas:
   ".  .     e1 .  .  .     e2 .  .  .  .     e3 .  .  .     e4 .  .      .     "
   "p1 .     e1 .  p2 .     e2 p3 .  p4 .     e3 p5 .  .     e4 p6 .      .     "
   "p1 four1 e1 .  p2 four2 e2 p3 .  p4 four3 e3 p5 .  four4 e4 p6 .      result"
-  "p1 four1 e1 .  p2 four2 e2 p3 .  p4 four3 e3 p5 .  four4 e4 p6 .      result"
+  "p1 four1 .  .  p2 four2 .  p3 .  p4 four3 .  p5 .  four4 .  p6 .      result"
   "p1 four1 .  b1 p2 four2 .  p3 b2 p4 four3 .  p5 b3 four4 .  p6 equals result"
   "p1 four1 .  .  p2 four2 .  p3 .  p4 four3 .  p5 .  four4 .  p6 .      result"
   "p1 .     .  .  p2 .     .  p3 .  p4 .     .  p5 .  .     .  p6 .      .     ";
@@ -142,36 +138,126 @@ body {
   grid-area: equals;
 }
 
+#operatorTiles {
+  margin: 10px;
+  padding: 15px;
+  background: var(--color-operatorTilesBackground);
+  border-radius: 10px;
+  border: 2px solid #1d1d1d;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+  height: 100px;
+  width: 720px;
+  display: grid;
+  grid-gap: 0px 0px;
+  grid-template-columns: calc(var(--grid-scalar)*var(--grid-binaryWidth)) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-parensWidth) var(--grid-expWidth) var(--grid-expWidth);
+  grid-template-rows: 0.1fr 0.5fr 1.0fr 0.5fr 0.1fr;
+  grid-template-areas:
+  ".    .     .       .      .          .           .    .      "
+  ".    .     .       .      parensOpen parensClose .    .      "
+  "plus minus multily divide parensOpen parensClose sqrt squared"
+  ".    .     .       .      parensOpen parensClose .    .      "
+  ".    .     .       .      .          .           .    .      ";
+}
+
+.plusTileGrid {
+  grid-area: plus;
+}
+
+.minusTileGrid {
+  grid-area: minus;
+}
+
+.multiplyTileGrid {
+  grid-area: multily;
+}
+
+.divideTileGrid {
+  grid-area: divide;
+}
+
+.parensOpenTileGrid {
+  grid-area: parensOpen;
+}
+
+.parensCloseTileGrid {
+  grid-area: parensClose;
+}
+
+.squaredTileGrid {
+  grid-area: squared;
+}
+
+.sqrtTileGrid {
+  grid-area: sqrt;
+}
 
 /* ^^^Grid Layout^^^ */
 
-
 /* Background Images */
-.staticFour {
+
+.four {
   background: url('/images/four.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
+}
+
+.fourNeg {
+  background: url('/images/fourNeg.png') no-repeat center center;
+  background-size: contain;
 }
 
 .plus {
   background: url('/images/plus.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
+}
+
+.minus {
+  background: url('/images/minus.png') no-repeat center center;
+  background-size: contain;
+}
+
+.multiply {
+  background: url('/images/multiply.png') no-repeat center center;
+  background-size: contain;
+}
+
+.divide {
+  background: url('/images/divide.png') no-repeat center center;
+  background-size: contain;
+}
+
+.parensOpen {
+  background: url('/images/parensOpen.png') no-repeat center center;
+  background-size: contain;
+}
+
+.parensClose {
+  background: url('/images/parensClose.png') no-repeat center center;
+  background-size: contain;
+}
+
+.squared {
+  background: url('/images/squared.png') no-repeat center center;
+  background-size: contain;
+}
+
+.sqrt {
+  background: url('/images/sqrt.png') no-repeat center center;
+  background-size: contain;
 }
 
 .equals {
   background: url('/images/equals.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
 }
-
 
 /* Sizing */
 
-.gameContainer{
+.gameContainer {
   max-width: 720px;
 }
 
-
-
 /*       */
+
 div {
   -webkit-animation-iteration-count: 1;
   animation-iteration-count: 1;
@@ -180,15 +266,12 @@ div {
 #textFour {
   font-family: 'Playfair Display SC', serif;
   text-shadow: 1px 0px 0px var(--color-textShadow), 0px 1px 0px var(--color-textShadow), 2px 1px 0px var(--color-textShadow), 1px 2px 0px var(--color-textShadow), 3px 2px 0px var(--color-textShadow), 2px 3px 0px var(--color-textShadow), 4px 3px 0px var(--color-textShadow), 3px 4px 0px var(--color-textShadow);
-
-
 }
 
 #textFours {
   font-family: 'Dancing Script', cursive;
   /* text-shadow: 2px 2px 2px #ff0000, 4px 4px 4px #00ff00; */
   text-shadow: 1px 0px 0px var(--color-textShadow), 0px 1px 0px var(--color-textShadow), 2px 1px 0px var(--color-textShadow), 1px 2px 0px var(--color-textShadow), 3px 2px 0px var(--color-textShadow), 2px 3px 0px var(--color-textShadow), 4px 3px 0px var(--color-textShadow), 3px 4px 0px var(--color-textShadow);
-
 }
 
 #textFours::before {
@@ -208,6 +291,10 @@ div {
   text-align: center;
 }
 
+#instructions, .lead {
+  font-family: 'Lato', sans-serif;
+}
+
 #operatorTiles, .foursRow {
   font-family: 'Markazi Text', serif;
   font-size: 30px;
@@ -223,16 +310,36 @@ div {
 }
 
 @keyframes tada_3317 {
-  0% { transform: scale(1) }
-  5.55556% { transform:scale(.95) rotate(-6deg) }
-  11.11111% { transform:scale(.95) rotate(-6deg) }
-  16.66667% { transform:scale(1.05) rotate(6deg) }
-  22.22222% { transform:scale(1.05) rotate(-6deg) }
-  27.77778% { transform:scale(1.05) rotate(6deg) }
-  33.33333% { transform:scale(1.05) rotate(-6deg) }
-  38.88889% { transform:scale(1.05) rotate(6deg) }
-  44.44444% { transform:scale(1) rotate(0) }
-  100% { transform:scale(1) rotate(0) }
+  0% {
+    transform: scale(1)
+  }
+  5.55556% {
+    transform: scale(.95) rotate(-6deg)
+  }
+  11.11111% {
+    transform: scale(.95) rotate(-6deg)
+  }
+  16.66667% {
+    transform: scale(1.05) rotate(6deg)
+  }
+  22.22222% {
+    transform: scale(1.05) rotate(-6deg)
+  }
+  27.77778% {
+    transform: scale(1.05) rotate(6deg)
+  }
+  33.33333% {
+    transform: scale(1.05) rotate(-6deg)
+  }
+  38.88889% {
+    transform: scale(1.05) rotate(6deg)
+  }
+  44.44444% {
+    transform: scale(1) rotate(0)
+  }
+  100% {
+    transform: scale(1) rotate(0)
+  }
 }
 
 .horizontal {
@@ -241,14 +348,30 @@ div {
 }
 
 @keyframes horizontal_6114 {
-  0% { transform:translate(0,0) }
-  4.41177% { transform:translate(5px,0) }
-  8.82353% { transform:translate(0,0) }
-  13.23529% { transform:translate(5px,0) }
-  17.64706% { transform:translate(0,0) }
-  22.05882% { transform:translate(5px,0) }
-  26.47059% { transform:translate(0,0) }
-  100% { transform:translate(0,0) }
+  0% {
+    transform: translate(0, 0)
+  }
+  4.41177% {
+    transform: translate(5px, 0)
+  }
+  8.82353% {
+    transform: translate(0, 0)
+  }
+  13.23529% {
+    transform: translate(5px, 0)
+  }
+  17.64706% {
+    transform: translate(0, 0)
+  }
+  22.05882% {
+    transform: translate(5px, 0)
+  }
+  26.47059% {
+    transform: translate(0, 0)
+  }
+  100% {
+    transform: translate(0, 0)
+  }
 }
 
 .wrongResult {
@@ -258,39 +381,6 @@ div {
 .noResult {
   background: var(--color-noResult);
 }
-
-
-
-
-
-
-
-/* #item1 {
-  background: maroon;
-
-  grid-column-start: 1;
-  grid-column-end: 2;
-  grid-row-start: 1;
-  grid-row-end: 1;
-}
-#item2 {
-  background: white;
-
-  grid-column-start: 1;
-  grid-column-end: 3;
-  grid-row-start: 2;
-  grid-row-end: 2;
-}
-#item3 {
-  background: orange;
-
-  grid-column-start: 3;
-  grid-column-end: 4;
-  grid-row-start: 3;
-  grid-row-end: 3;
-} */
-
-
 
 
 
@@ -304,9 +394,8 @@ div {
   height: var(--pri-height);
   width: var(--pri-width); */
   text-align: center;
-  position: relative;
-  margin: 0.1em;
-
+  /* position: relative; */
+  /* margin: 0.1em; */
   /* border: 1px solid black; */
 }
 
@@ -349,7 +438,7 @@ div {
 }
 
 .dropped {
-  border: 1px solid #1d1d1d;
+  border: 1px none rgba(10, 10, 10, 0.4);
 }
 
 .dropZone, .draggable {
@@ -359,33 +448,6 @@ div {
   text-align: center;
 }
 
-.openParenthesis {
-  background: url('/images/parensOpen.png') no-repeat center center;
-}
-
-.closeParenthesis {
-  background: url('/images/parensClose.png') no-repeat center center;
-}
-
-.add {
-  background: url('/images/add.png') no-repeat center center;
-}
-
-.subtract {
-  background: url('/images/subtract.png') no-repeat center center;
-}
-
-.multiply {
-  background: url('/images/multiply.png') no-repeat center center;
-}
-
-.divide {
-  background: url('/images/divide.png') no-repeat center center;
-}
-
-.operator {
-  background: url('/images/operator.png') no-repeat center center;
-}
 
 [draggable] {
   -moz-user-select: none;

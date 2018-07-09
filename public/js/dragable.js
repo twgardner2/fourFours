@@ -9,6 +9,7 @@ var activeRowId = "#foursRow0";
 
 var dragSourceElement = null;
 var tileType = null;
+var tileValue = null;
 
 
 function handleDragStart(e) {
@@ -22,6 +23,7 @@ function handleDragStart(e) {
 
   e.originalEvent.dataTransfer.setData('operatorType', this.dataset.operatorType);
   tileType = this.dataset.operatorType;
+  tileValue = this.dataset.operator;
 }
 
 function handleDragEnd() {
@@ -67,7 +69,7 @@ function handleDrop(e) {
   if (dragSourceElement != this && tileType.includes(this.dataset.operatorAccepted)) {
     // this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
     this.dataset.value = e.originalEvent.dataTransfer.getData('text/plain');
-    $(this).removeClass('over minus multiply divide').addClass('dropped plus');
+    $(this).removeClass('over plus minus multiply divide').addClass('dropped').addClass(tileValue);
   }
   tileType = null;
 
@@ -77,16 +79,19 @@ function handleDrop(e) {
 }
 
 function resetDropZone() {
-  $(this).html('').removeClass('dropped');
+  $(this).html('').removeClass('dropped plus minus multiply divide parensOpen parensClose squared sqrt');
+  this.dataset.value = this.dataset.defaultValue;
   evalExpression();
 }
 
 function negateFourByClick() {
-  if (this.innerHTML === "4") {
-    this.innerHTML = "-4";
-    this.dataset.value = "+(-4)"
+  if (this.classList.contains('four')) {
+    this.classList.remove("four");
+    this.classList.add("fourNeg");
+    this.dataset.value = "-4"
   } else {
-    this.innerHTML = "4";
+    this.classList.remove("fourNeg");
+    this.classList.add("four");
     this.dataset.value = "4"
   }
   evalExpression();
@@ -132,6 +137,7 @@ function evalExpression() {
 
     if (isCorrect === true) {
       $(activeRowId).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
+      $(activeRowId).children().css('border-style', 'none');
       insertRow();
     } else if (isCorrect === false) {
       $(activeRowId).removeClass('noResult rightResult tada wrongResult horizontal').addClass('wrongResult horizontal');
@@ -162,7 +168,7 @@ function attachDragDropEventListeners() {
   $('.dropZone').on('drop', handleDrop);
 
   $('.dropZone').on('click', resetDropZone);
-  $('.staticFour').on('click', negateFourByClick);
+  $('.four').on('click', negateFourByClick);
 }
 
 function playButtonClick() {
@@ -190,11 +196,11 @@ function insertRow() {
 }
 
 function genFourDiv(gridPositionClass) {
-  return `<div class="staticSymbol staticFour ${gridPositionClass}" data-value="4"></div>`;
+  return `<div class="staticSymbol four ${gridPositionClass}" data-value="4"></div>`;
 }
 
 function genBinaryOperatorDiv(gridPositionClass) {
-  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="binary" data-defaultValue=" " data-value=" "></div>`;
+  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="binary" data-default-value=" " data-value=" "></div>`;
 }
 
 function genParensDiv(parensTypeAccepted, gridPositionClass) {
@@ -217,18 +223,8 @@ function genRequiredResultDiv(gridPositionClass) {
 
 function rowGenerator() {
 
-  // staticFour = `<div class="staticSymbol staticFour" data-value="4">4</div>`;
-  // staticEquals = `<div class="staticSymbol" data-value="=">=</div>`;
-  // equalsRequiredResult = `<div id="requiredResult" class="staticSymbol" data-value="=${activeRow}"> =${activeRow} </div>`
-  // binaryOperator = `<div class="dropZone smallSquare" data-operator-accepted="binary" data-defaultValue=" " data-value=" "></div>`;
-  // openOrCloseParens = `<div class="dropZone tallRectangle" data-operator-accepted="parens" data-value=" "></div>`;
-  // openParens = `<div class="dropZone tallRectangle" data-operator-accepted="parensOpen" data-value=" "></div>`;
-  // closeParens = `<div class="dropZone tallRectangle" data-operator-accepted="parensClose" data-value=""></div>`;
-  // exponent = `<div class="dropZone exponentSquare" data-operator-accepted="exponent" data-defaultValue="**1" data-value="**1"></div>`;
-
   newRowHTML = `  <div id="foursRow${activeRow}" class="row foursRow noResult"> ` +
 
-      // `${openParens} ${staticFour} ${exponent} ${binaryOperator} ` +
       `${genParensDiv("parensOpen", "p1")} ${genFourDiv("four1")} ${genExpDiv("e1")}` +
 
       `${genBinaryOperatorDiv("b1")} ${genParensDiv("parensOpen", "p2")} ${genFourDiv("four2")} ${genExpDiv("e2")} ${genParensDiv("parensClose", "p3")}` +

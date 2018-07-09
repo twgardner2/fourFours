@@ -1,7 +1,7 @@
 <div class="container gameContainer">
 
   <div id="intro" class="row">
-    <p class="font-weight-bold">How to Play: Drag and drop the correct mathematical operators in the correct places to make the four 4s equal 1, then 2, then 3, and so on.</p>
+    <div id="instructions" class="">How to Play: Drag and drop the correct mathematical operators in the correct places to make the four 4s equal 1, then 2, then 3, and so on. Negate any '4' by clicking on it. Click it again to toggle back.</div>
     <br>
     <button id="startButton" type="button" class="btn btn-primary">Play!</button>
 
@@ -10,29 +10,29 @@
 
   <div id='operatorTiles' class="row dragTiles" style="display: none;">
 
-    <div class="draggable plus" draggable='true' data-operator-type="binary" data-value="+">+</div>
-    <div class="tileSeparator"></div>
-    <div class="draggable minus" draggable='true' data-operator-type="binary" data-value="-">-</div>
-    <div class="tileSeparator"></div>
-    <div class="draggable multiply" draggable='true' data-operator-type="binary" data-value="*">x</div>
-    <div class="tileSeparator"></div>
-    <div class="draggable divide" draggable='true' data-operator-type="binary" data-value="/">/</div>
-    <div class="tileSeparator"></div>
-    <div class="draggable tallRectangle" draggable='true' data-operator-type="parensOpen" data-value="(">(</div>
-    <div class="tileSeparator"></div>
-    <div class="draggable tallRectangle" draggable='true' data-operator-type="parensClose" data-value=")">)</div>
-    <div class="tileSeparator"></div>
-    <div class="draggable exponentSquare" draggable='true' data-operator-type="exponent" data-value="**2">2</div>
-    <div class="tileSeparator"></div>
-    <div class="draggable exponentSquare" draggable='true' data-operator-type="exponent" data-value="**(1/2)">1/2</div>
+    <div class="draggable plus plusTileGrid" draggable='true' data-operator-type="binary" data-operator="plus" data-value="+"></div>
+    <!-- <div class="tileSeparator"></div> -->
+    <div class="draggable minus minusTileGrid" draggable='true' data-operator-type="binary" data-operator="minus" data-value="-"></div>
+    <!-- <div class="tileSeparator"></div> -->
+    <div class="draggable multiply multiplyTileGrid" draggable='true' data-operator-type="binary" data-operator="multiply" data-value="*"></div>
+    <!-- <div class="tileSeparator"></div> -->
+    <div class="draggable divide divideTileGrid" draggable='true' data-operator-type="binary" data-operator="divide" data-value="/"></div>
+    <!-- <div class="tileSeparator"></div> -->
+    <div class="draggable parensOpen parensOpenTileGrid" draggable='true' data-operator-type="parensOpen" data-operator="parensOpen" data-value="("></div>
+    <!-- <div class="tileSeparator"></div> -->
+    <div class="draggable parensClose parensCloseTileGrid" draggable='true' data-operator-type="parensClose" data-operator="parensClose" data-value=")"></div>
+    <!-- <div class="tileSeparator"></div> -->
+    <div class="draggable squared squaredTileGrid" draggable='true' data-operator-type="exponent" data-operator="squared" data-value="**2"></div>
+    <!-- <div class="tileSeparator"></div> -->
+    <div class="draggable sqrt sqrtTileGrid" draggable='true' data-operator-type="exponent" data-operator="sqrt" data-value="**(1/2)"></div>
 
   </div>
 
   <div id="buttons" class="row">
-    <div class="col">
+    <!-- <div class="col">
       <input id="buttonEval" type="button" value="Evaluate">
       <input id="buttonReset" type="button" value="Reset">
-    </div>
+    </div> -->
 
     <div class="col">
       <div id="expression"></div>
@@ -40,12 +40,6 @@
     </div>
 
 
-  </div>
-
-  <div id="testGrid">
-    <div id="item1">Item 1</div>
-    <div id="item2">Item 2</div>
-    <div id="item3">Item 3</div>
   </div>
 
 </div>
