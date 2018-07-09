@@ -87,11 +87,11 @@ function negateFourByClick() {
   if (this.classList.contains('four')) {
     this.classList.remove("four");
     this.classList.add("fourNeg");
-    this.dataset.value = "-4"
+    this.dataset.value = this.dataset.valueNegative;
   } else {
     this.classList.remove("fourNeg");
     this.classList.add("four");
-    this.dataset.value = "4"
+    this.dataset.value = this.dataset.valueDefault;
   }
   evalExpression();
 
@@ -110,23 +110,21 @@ function evalExpression() {
   $(activeRowId).children("div").each(function(index, el) {
     // lhs += el.innerHTML;
     // lhs += el.dataset.value;
-
     lhsinnerHTML += el.innerHTML;
     lhsdatasetValue += el.dataset.value;
     // console.log(lhsdatasetValue);
     // console.log(el.dataset.value);
     // console.log(el.innerHTML);
-
   });
   lhs = lhsdatasetValue.replace(/\s/g,'');
-  console.log(`First Char: ${lhs.charAt(0)}`);
-  if(lhs.charAt(0) === "+") {
-    lhs = lhs.substring(1,lhs.length);
-  }
+  // console.log(`First Char: ${lhs.charAt(0)}`);
+  // if(lhs.charAt(0) === "+") {
+  //   lhs = lhs.substring(1,lhs.length);
+  // }
 
   lhs = lhs.substring(0, lhs.indexOf("="));
-  console.log(lhs);
-
+  // console.log(lhs);
+  tokenize(lhs);
   try {
     lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
     $('#expression').text(lhs);
@@ -195,7 +193,7 @@ function insertRow() {
 }
 
 function genFourDiv(gridPositionClass) {
-  return `<div class="staticSymbol four ${gridPositionClass}" data-value="+(4"></div>`;
+  return `<div class="staticSymbol four ${gridPositionClass}" data-value-default="(4" data-value-negative="(-4" data-value="(4"></div>`;
 }
 
 function genBinaryOperatorDiv(gridPositionClass) {
@@ -238,7 +236,35 @@ function rowGenerator() {
 
 }
 
+// Tokenizing
+
 function createToken(type, value) {
     this.type = type;
     this.value = value;
+}
+
+function tokenize(lhs) {
+  var result = [];
+
+  // Remove whitespaces
+  lhs.replace(/\s+/g, "");
+
+  lhs = lhs.split('');
+  lhs.forEach(function(char, i) {
+    console.log(char);
+  });
+  // console.log(typeof(lhs[1]));
+}
+
+function isDigit(ch) {
+  return /\d/.test(ch);
+}
+function isOperator(ch) {
+  return /\+|-|\/|\^/.test(ch);
+}
+function isLeftParens(ch) {
+  return (ch === '(');
+}
+function isRightParens(ch) {
+  return (ch === ')');
 }
