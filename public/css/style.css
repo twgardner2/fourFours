@@ -17,7 +17,7 @@
   --grid-expWidth: 0.75fr;
   --grid-equalsWidth: 2.50fr;
   --grid-resultWidth: 1.50fr;
-  --grid-scalar: 0.5;
+  --grid-scalar: 0.05;
 }
 
 * {
@@ -148,8 +148,8 @@ body {
   height: 100px;
   width: 720px;
   display: grid;
-  grid-gap: 0px 0px;
-  grid-template-columns: calc(var(--grid-scalar)*var(--grid-binaryWidth)) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-parensWidth) var(--grid-expWidth) var(--grid-expWidth);
+  grid-gap: 0px 10px;
+  grid-template-columns: calc(0.05*var(--grid-binaryWidth)) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-parensWidth) var(--grid-expWidth) var(--grid-expWidth);
   grid-template-rows: 0.1fr 0.5fr 1.0fr 0.5fr 0.1fr;
   grid-template-areas:
   ".    .     .       .      .          .           .    .      "
@@ -421,7 +421,7 @@ div {
 
 .draggable {
   border: 2px solid #1d1d1d;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.25);
   opacity: 1.0;
   transition: transform 200ms, box-shadow 200ms;
 }

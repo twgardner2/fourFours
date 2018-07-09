@@ -1,7 +1,6 @@
 // To Do:
-/// Change dropZone display to an image
-/// Use only grid system from Bootstrap?
-/// Fix dropZone reset function
+/// operatorTiles grid not working?
+/// remove Bootstrap?
 
 
 var activeRow = 0;
@@ -196,7 +195,7 @@ function insertRow() {
 }
 
 function genFourDiv(gridPositionClass) {
-  return `<div class="staticSymbol four ${gridPositionClass}" data-value="4"></div>`;
+  return `<div class="staticSymbol four ${gridPositionClass}" data-value="+(4"></div>`;
 }
 
 function genBinaryOperatorDiv(gridPositionClass) {
@@ -204,11 +203,11 @@ function genBinaryOperatorDiv(gridPositionClass) {
 }
 
 function genParensDiv(parensTypeAccepted, gridPositionClass) {
-  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="${parensTypeAccepted}" data-value=" "></div>`;
+  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="${parensTypeAccepted}" data-default-value=" " data-value=" "></div>`;
 }
 
 function genExpDiv(gridPositionClass) {
-  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="exponent" data-defaultValue="**1" data-value="**1"></div>`;
+  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="exponent" data-default-value="**1)" data-value="**1)"></div>`;
 }
 
 function genEqualsDiv(gridPositionClass) {
@@ -218,8 +217,6 @@ function genEqualsDiv(gridPositionClass) {
 function genRequiredResultDiv(gridPositionClass) {
   return `<div id="requiredResult" class="staticSymbol ${gridPositionClass}" data-value="${activeRow}"> ${activeRow} </div>`;
 }
-
-
 
 function rowGenerator() {
 
@@ -239,4 +236,9 @@ function rowGenerator() {
 
   return newRowHTML;
 
+}
+
+function createToken(type, value) {
+    this.type = type;
+    this.value = value;
 }
