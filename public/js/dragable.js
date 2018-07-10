@@ -10,6 +10,8 @@ var dragSourceElement = null;
 var tileType = null;
 var tileValue = null;
 
+var tokenizedExpression;
+var parsedExpression;
 
 function handleDragStart(e) {
   // console.log(`running 'handleDragStart'...`);
@@ -116,7 +118,7 @@ function evalExpression() {
     // console.log(el.dataset.value);
     // console.log(el.innerHTML);
   });
-  lhs = lhsdatasetValue.replace(/\s/g,'');
+  lhs = lhsdatasetValue.replace(/\s/g, '');
   // console.log(`First Char: ${lhs.charAt(0)}`);
   // if(lhs.charAt(0) === "+") {
   //   lhs = lhs.substring(1,lhs.length);
@@ -124,7 +126,12 @@ function evalExpression() {
 
   lhs = lhs.substring(0, lhs.indexOf("="));
   // console.log(lhs);
-  tokenize(lhs);
+  tokenizedExpression = tokenize(lhs);
+  console.log(tokenizedExpression);
+
+  parsedExpression = parseTokenizedExpressionToRPN(tokenizedExpression);
+  console.log(parsedExpression);
+
   try {
     lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
     $('#expression').text(lhs);
@@ -193,7 +200,7 @@ function insertRow() {
 }
 
 function genFourDiv(gridPositionClass) {
-  return `<div class="staticSymbol four ${gridPositionClass}" data-value-default="(4" data-value-negative="(-4" data-value="(4"></div>`;
+  return `<div class="staticSymbol four ${gridPositionClass}" data-value-default="(4" data-value-negative="((0-4)" data-value="(4"></div>`;
 }
 
 function genBinaryOperatorDiv(gridPositionClass) {
@@ -205,7 +212,7 @@ function genParensDiv(parensTypeAccepted, gridPositionClass) {
 }
 
 function genExpDiv(gridPositionClass) {
-  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="exponent" data-default-value="**1)" data-value="**1)"></div>`;
+  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="exponent" data-default-value="^1)" data-value="^1)"></div>`;
 }
 
 function genEqualsDiv(gridPositionClass) {
@@ -220,15 +227,15 @@ function rowGenerator() {
 
   newRowHTML = `  <div id="foursRow${activeRow}" class="row foursRow noResult"> ` +
 
-      `${genParensDiv("parensOpen", "p1")} ${genFourDiv("four1")} ${genExpDiv("e1")}` +
+    `${genParensDiv("parensOpen", "p1")} ${genFourDiv("four1")} ${genExpDiv("e1")}` +
 
-      `${genBinaryOperatorDiv("b1")} ${genParensDiv("parensOpen", "p2")} ${genFourDiv("four2")} ${genExpDiv("e2")} ${genParensDiv("parensClose", "p3")}` +
+    `${genBinaryOperatorDiv("b1")} ${genParensDiv("parensOpen", "p2")} ${genFourDiv("four2")} ${genExpDiv("e2")} ${genParensDiv("parensClose", "p3")}` +
 
-      `${genBinaryOperatorDiv("b2")} ${genParensDiv("parensOpen", "p4")} ${genFourDiv("four3")} ${genExpDiv("e3")} ${genParensDiv("parensClose", "p5")}` +
+    `${genBinaryOperatorDiv("b2")} ${genParensDiv("parensOpen", "p4")} ${genFourDiv("four3")} ${genExpDiv("e3")} ${genParensDiv("parensClose", "p5")}` +
 
-      `${genBinaryOperatorDiv("b3")}                                     ${genFourDiv("four4")} ${genExpDiv("e4")} ${genParensDiv("parensClose", "p6")}` +
+    `${genBinaryOperatorDiv("b3")}                                     ${genFourDiv("four4")} ${genExpDiv("e4")} ${genParensDiv("parensClose", "p6")}` +
 
-      `${genEqualsDiv("equals")} ${genRequiredResultDiv("result")}` +
+    `${genEqualsDiv("equals")} ${genRequiredResultDiv("result")}` +
 
     `</div>`
 
@@ -238,33 +245,156 @@ function rowGenerator() {
 
 // Tokenizing
 
-function createToken(type, value) {
-    this.type = type;
-    this.value = value;
+function Token(type, value) {
+  this.type = type;
+  this.value = value;
 }
 
 function tokenize(lhs) {
   var result = [];
+  var numBuffer = [];
+  var prevCharRightParens = false;
 
   // Remove whitespaces
   lhs.replace(/\s+/g, "");
-
+  // Split out each character
   lhs = lhs.split('');
+
   lhs.forEach(function(char, i) {
-    console.log(char);
+    if (isDigit(char)) {
+
+      if (prevCharRightParens) {
+        result.push(new Token('Operator', '*'));
+        prevCharRightParens = false;
+      }
+      numBuffer.push(char);
+      prevCharRightParens = false;
+
+    } else if (char === ".") {
+      if (prevCharRightParens) {
+        result.push(new Token('Operator', '*'));
+        prevCharRightParens = false;
+      }
+      numBuffer.push(char);
+      prevCharRightParens = false;
+
+    } else if (isOperator(char)) {
+      if (numBuffer.length) {
+        emptyNumBufferAsLiteral();
+        prevCharRightParens = false;
+      }
+      result.push(new Token('Operator', char));
+      prevCharRightParens = false;
+
+    } else if (isLeftParens(char)) {
+      if (numBuffer.length) {
+        emptyNumBufferAsLiteral();
+        result.push(new Token('Operator', '*'));
+      } else if (prevCharRightParens) {
+        result.push(new Token('Operator', '*'));
+        prevCharRightParens = false;
+      }
+      result.push(new Token('LeftParens', char));
+
+    } else if (isRightParens(char)) {
+      if (numBuffer.length) {
+        emptyNumBufferAsLiteral();
+      }
+      result.push(new Token('RightParens', char));
+      prevCharRightParens = true;
+
+    }
+
   });
-  // console.log(typeof(lhs[1]));
+
+
+  function emptyNumBufferAsLiteral() {
+    if (numBuffer.length) {
+      result.push(new Token('Literal', numBuffer.join('')));
+      numBuffer = [];
+    }
+  }
+
+  console.log(result);
+
+  return result;
 }
+
+function parseTokenizedExpressionToRPN(tokenizedExpression) {
+  var stack = [];
+  var outputQueue = [];
+  var rpn;
+
+  var assoc = {
+    '^': 'right',
+    '*': 'left',
+    '/': 'left',
+    '+': 'left',
+    '-': 'left',
+  };
+
+  var prec = {
+    '^': 4,
+    '*': 3,
+    '/': 3,
+    '+': 2,
+    '-': 2,
+  };
+
+  Token.prototype.precedence = function() {
+    return prec[this.value];
+  };
+
+  Token.prototype.associativity = function() {
+    return assoc[this.value];
+  };
+
+  Array.prototype.peek = function() {
+    return this.slice(-1)[0];
+  };
+
+  tokenizedExpression.forEach(function(t) {
+      // If Literal, push to output queue'dragable.js'
+
+      if (t.type === "Literal") {
+        outputQueue.push(t);
+      } else if (t.type === "Operator") {
+        while (stack.peek() && (stack.peek().type === "Operator") && ((t.associativity() === "left" && t.precedence() <= stack.peek().precedence()) ||
+            (t.associativity() === "right" && t.precedence() < stack.peek().precedence()))) {
+          outputQueue.push(stack.pop());
+        }
+        stack.push(t);
+      } else if (t.type === "LeftParens") {
+        stack.push(t);
+      } else if (t.type === "RightParens") {
+        while (stack.peek() && stack.peek().type !== "LeftParens") {
+          outputQueue.push(stack.pop());
+        }
+        stack.pop();
+      }
+    });
+
+  rpn = outputQueue.concat(stack.reverse());
+
+  return rpn.map(token => token.value).join(" ");
+
+  }
+
+
+
 
 function isDigit(ch) {
   return /\d/.test(ch);
 }
+
 function isOperator(ch) {
   return /\+|-|\/|\^/.test(ch);
 }
+
 function isLeftParens(ch) {
   return (ch === '(');
 }
+
 function isRightParens(ch) {
   return (ch === ')');
 }
