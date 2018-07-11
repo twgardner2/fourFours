@@ -103,58 +103,48 @@ function evalExpression() {
   // console.log(`running 'evalExpression'...activeRowId: ${activeRowId}`);
 
   var lhs = '';
-  var lhsinnerHTML = '';
-  var lhsdatasetValue = '';
-  var lhsEvaluated = null;
   var requiredResult = null;
   var isCorrect = null;
 
   $(activeRowId).children("div").each(function(index, el) {
-    // lhs += el.innerHTML;
-    // lhs += el.dataset.value;
-    lhsinnerHTML += el.innerHTML;
-    lhsdatasetValue += el.dataset.value;
-    // console.log(lhsdatasetValue);
-    // console.log(el.dataset.value);
-    // console.log(el.innerHTML);
+    lhs += el.dataset.value;
   });
-  lhs = lhsdatasetValue.replace(/\s/g, '');
-  // console.log(`First Char: ${lhs.charAt(0)}`);
-  // if(lhs.charAt(0) === "+") {
-  //   lhs = lhs.substring(1,lhs.length);
-  // }
+  lhs = lhs.replace(/\s/g, '').substring(0, lhs.indexOf("="));
 
-  lhs = lhs.substring(0, lhs.indexOf("="));
-  // console.log(lhs);
   tokenizedExpression = tokenize(lhs);
+  console.log('Tokenized Expression:');
   console.log(tokenizedExpression);
+  console.log('\n');
 
-  parsedExpression = parseTokenizedExpressionToRPN(tokenizedExpression);
-  console.log(parsedExpression);
+  rpn = parseTokenizedExpressionToRPN(tokenizedExpression);
+  console.log('Parsed Expression (RPN):');
+  console.log(rpn);
+  console.log('\n');
 
-  try {
-    lhsEvaluated = new Function('"use strict";return (' + lhs + ')')();
-    $('#expression').text(lhs);
-    $('#evalResult').text(lhsEvaluated);
+  evaluatedRPN = evaluateRPN(rpn);
+  console.log('Result of evaluating RPN:');
+  console.log(evaluatedRPN);
+  console.log('\n');
 
-    isCorrect = lhsEvaluated === activeRow;
+  tokenizedExpression = tokenizedExpression.map(el => el.value).join('');
+  rpn = rpn.map(el => el.value).join('');
 
-    if (isCorrect === true) {
+  $('#expression').text(tokenizedExpression);
+  $('#expressionRPN').text(rpn);
+  $('#evalResult').text(evaluatedRPN);
+
+  if ( evaluatedRPN || evaluatedRPN === 0 ) {
+
+    if ( evaluatedRPN === activeRow ) {
       $(activeRowId).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
       $(activeRowId).children().css('border-style', 'none');
       insertRow();
-    } else if (isCorrect === false) {
+    } else {
       $(activeRowId).removeClass('noResult rightResult tada wrongResult horizontal').addClass('wrongResult horizontal');
     }
-    return isCorrect;
-
-  } catch (error) {
-    console.log(error.message);
-    $('#expression').text(lhs);
-    $(activeRowId).removeClass('rightResult tada wrongResult horizontal').addClass('noResult');
-    return undefined;
 
   }
+
 }
 
 function resetRow() {
@@ -199,30 +189,6 @@ function insertRow() {
   attachDragDropEventListeners();
 }
 
-function genFourDiv(gridPositionClass) {
-  return `<div class="staticSymbol four ${gridPositionClass}" data-value-default="(4" data-value-negative="((0-4)" data-value="(4"></div>`;
-}
-
-function genBinaryOperatorDiv(gridPositionClass) {
-  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="binary" data-default-value=" " data-value=" "></div>`;
-}
-
-function genParensDiv(parensTypeAccepted, gridPositionClass) {
-  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="${parensTypeAccepted}" data-default-value=" " data-value=" "></div>`;
-}
-
-function genExpDiv(gridPositionClass) {
-  return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="exponent" data-default-value="^1)" data-value="^1)"></div>`;
-}
-
-function genEqualsDiv(gridPositionClass) {
-  return `<div class="staticSymbol equals ${gridPositionClass}" data-value="="></div>`;
-}
-
-function genRequiredResultDiv(gridPositionClass) {
-  return `<div id="requiredResult" class="staticSymbol ${gridPositionClass}" data-value="${activeRow}"> ${activeRow} </div>`;
-}
-
 function rowGenerator() {
 
   newRowHTML = `  <div id="foursRow${activeRow}" class="row foursRow noResult"> ` +
@@ -237,9 +203,33 @@ function rowGenerator() {
 
     `${genEqualsDiv("equals")} ${genRequiredResultDiv("result")}` +
 
-    `</div>`
+    `</div>`;
 
-  return newRowHTML;
+    return newRowHTML;
+
+    function genFourDiv(gridPositionClass) {
+      return `<div class="staticSymbol four ${gridPositionClass}" data-value-default="(4" data-value-negative="((0-4)" data-value="(4"></div>`;
+    }
+
+    function genBinaryOperatorDiv(gridPositionClass) {
+      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="binary" data-default-value=" " data-value=" "></div>`;
+    }
+
+    function genParensDiv(parensTypeAccepted, gridPositionClass) {
+      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="${parensTypeAccepted}" data-default-value=" " data-value=" "></div>`;
+    }
+
+    function genExpDiv(gridPositionClass) {
+      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="exponent" data-default-value="^1)" data-value="^1)"></div>`;
+    }
+
+    function genEqualsDiv(gridPositionClass) {
+      return `<div class="staticSymbol equals ${gridPositionClass}" data-value="="></div>`;
+    }
+
+    function genRequiredResultDiv(gridPositionClass) {
+      return `<div id="requiredResult" class="staticSymbol ${gridPositionClass}" data-value="${activeRow}"> ${activeRow} </div>`;
+    }
 
 }
 
@@ -257,13 +247,17 @@ function tokenize(lhs) {
 
   // Remove whitespaces
   lhs.replace(/\s+/g, "");
+  lhs = lhs.substring(0, lhs.indexOf('='))
   // Split out each character
   lhs = lhs.split('');
 
   lhs.forEach(function(char, i) {
+    console.log(`Token: ${char}`);
     if (isDigit(char)) {
 
       if (prevCharRightParens) {
+        console.log('PUSH A MULTIPLICATION');
+
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
       }
@@ -272,6 +266,8 @@ function tokenize(lhs) {
 
     } else if (char === ".") {
       if (prevCharRightParens) {
+        console.log('PUSH A MULTIPLICATION');
+
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
       }
@@ -289,14 +285,17 @@ function tokenize(lhs) {
     } else if (isLeftParens(char)) {
       if (numBuffer.length) {
         emptyNumBufferAsLiteral();
+        console.log('PUSH A MULTIPLICATION');
         result.push(new Token('Operator', '*'));
       } else if (prevCharRightParens) {
+        console.log('PUSH A MULTIPLICATION');
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
       }
       result.push(new Token('LeftParens', char));
 
     } else if (isRightParens(char)) {
+      console.log(`token is right parens`);
       if (numBuffer.length) {
         emptyNumBufferAsLiteral();
       }
@@ -307,15 +306,13 @@ function tokenize(lhs) {
 
   });
 
-
   function emptyNumBufferAsLiteral() {
     if (numBuffer.length) {
       result.push(new Token('Literal', numBuffer.join('')));
       numBuffer = [];
     }
   }
-
-  console.log(result);
+  // console.log(result);
 
   return result;
 }
@@ -376,10 +373,74 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
 
   rpn = outputQueue.concat(stack.reverse());
 
-  return rpn.map(token => token.value).join(" ");
+  return rpn;
+  // return rpn.map(token => token.value);
+  //.join(" ");
 
   }
 
+function evaluateRPN(rpn) {
+
+  var stack = [];
+  var op1;
+  var op2;
+
+  rpn.forEach( function(t) {
+    // console.log(t);
+    console.log(`Processing token: ${t.value}`);
+
+    if ( t.type === 'Literal' ) {
+      console.log(`pushing literal ${parseFloat(t.value)} to the stack`);
+      stack.push(parseFloat(t.value));
+      console.log(stack);
+
+    } else if ( t.type === "Operator" ) {
+
+      op2 = stack.pop(); //console.log(`op2: ${op2}`);
+      op1 = stack.pop(); //console.log(`op1: ${op1}`);
+
+      if ( t.value === "+" ) {
+        // console.log(`op1+op2: ${op1+op2}`);
+        stack.push(op1 + op2);
+        console.log(stack);
+      } else if ( t.value === "-" ) {
+        // console.log(`op1 - op2: ${op1 - op2}`);
+        stack.push(op1 - op2);
+        console.log(stack);
+      } else if ( t.value === "*" ) {
+        // console.log(`op1 * op2: ${op1 * op2}`);
+        stack.push(op1 * op2);
+        console.log(stack);
+      } else if ( t.value === "/" ) {
+        // console.log(`op1 / op2: ${op1 / op2}`);
+        stack.push(op1 / op2);
+        console.log(stack);
+      } else if (t.value === "^") {
+        // console.log(`op1 ^ op2: ${op1 ** op2}`);
+        stack.push(op1 ** op2);
+        console.log(stack);
+
+      }
+      console.log('\n');
+    }
+  });
+  console.log(stack.length);
+  console.log(stack);
+
+  if (stack.length === 1) {
+    var output;
+    output = stack.pop();
+
+    if(output || output === 0) {
+      return output;
+    } else {
+      return undefined;
+    }
+  } else {
+    return undefined;
+  }
+
+}
 
 
 
