@@ -1,5 +1,6 @@
 // To Do:
-/// operatorTiles grid not working?
+/// when wrong, make equals sign a not equals sign
+/// add factorial
 /// remove Bootstrap?
 
 
@@ -193,7 +194,7 @@ function rowGenerator() {
 
   newRowHTML = `  <div id="foursRow${activeRow}" class="row foursRow noResult"> ` +
 
-    `${genParensDiv("parensOpen", "p1")} ${genFourDiv("four1")} ${genExpDiv("e1")}` +
+    `${genParensDiv("parensOpen", "p1")} ${genFourDiv("four1")} ${genFactorialDiv("fact1")}  ${genExpDiv("e1")}` +
 
     `${genBinaryOperatorDiv("b1")} ${genParensDiv("parensOpen", "p2")} ${genFourDiv("four2")} ${genExpDiv("e2")} ${genParensDiv("parensClose", "p3")}` +
 
@@ -217,6 +218,10 @@ function rowGenerator() {
 
     function genParensDiv(parensTypeAccepted, gridPositionClass) {
       return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="${parensTypeAccepted}" data-default-value=" " data-value=" "></div>`;
+    }
+
+    function genFactorialDiv(gridPositionClass) {
+      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="factorial" data-default-value=" " data-value=" "></div>`;
     }
 
     function genExpDiv(gridPositionClass) {
@@ -302,6 +307,13 @@ function tokenize(lhs) {
       result.push(new Token('RightParens', char));
       prevCharRightParens = true;
 
+    } else if ( isFactorial(char) ) {
+      console.log(`token is factorial`);
+      if(numBuffer.length) {
+        emptyNumBufferAsLiteral();
+      }
+      result.push(new Token('Factorial', char));
+      prevCharRightParens = false;
     }
 
   });
@@ -324,6 +336,7 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
 
   var assoc = {
     '^': 'right',
+    '!': 'right',
     '*': 'left',
     '/': 'left',
     '+': 'left',
@@ -331,6 +344,7 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
   };
 
   var prec = {
+    '!': 5,
     '^': 4,
     '*': 3,
     '/': 3,
@@ -368,6 +382,8 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
           outputQueue.push(stack.pop());
         }
         stack.pop();
+      } else if (t.type === "Factorial") {
+        outputQueue.push(t);
       }
     });
 
@@ -422,6 +438,9 @@ function evaluateRPN(rpn) {
 
       }
       console.log('\n');
+    } else if (t.type === "Factorial") {
+      op1 = stack.pop();
+      stack.push(factorialize(op1));
     }
   });
   console.log(stack.length);
@@ -442,7 +461,15 @@ function evaluateRPN(rpn) {
 
 }
 
-
+function factorialize(num) {
+  if (num < 0)
+        return -1;
+  else if (num == 0)
+      return 1;
+  else {
+      return (num * factorialize(num - 1));
+  }
+}
 
 function isDigit(ch) {
   return /\d/.test(ch);
@@ -458,4 +485,8 @@ function isLeftParens(ch) {
 
 function isRightParens(ch) {
   return (ch === ')');
+}
+
+function isFactorial(ch) {
+  return (ch === "!");
 }
