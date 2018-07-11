@@ -1,7 +1,8 @@
 // To Do:
-/// when wrong, make equals sign a not equals sign
-/// add factorial
-/// remove Bootstrap?
+/// When wrong, make equals sign a not equals sign
+/// Add factorial
+/// Evaluation: prevent until at least 3 binary operators added
+/// Remove Bootstrap?
 
 
 var activeRow = 0;
@@ -13,6 +14,20 @@ var tileValue = null;
 
 var tokenizedExpression;
 var parsedExpression;
+
+
+
+$(document).ready(function() {
+
+  $('#startButton').on('click', playButtonClick);
+  // $('#buttonEval').on('click', evalExpression);
+  // $('#buttonReset').on('click', resetRow);
+
+  attachDragDropEventListeners()
+
+})
+
+// Drag Events
 
 function handleDragStart(e) {
   // console.log(`running 'handleDragStart'...`);
@@ -80,8 +95,10 @@ function handleDrop(e) {
   return false;
 }
 
+// Row Click Functions
+
 function resetDropZone() {
-  $(this).html('').removeClass('dropped plus minus multiply divide parensOpen parensClose squared sqrt');
+  $(this).html('').removeClass('dropped plus minus multiply divide parensOpen parensClose squared sqrt factorial');
   this.dataset.value = this.dataset.defaultValue;
   evalExpression();
 }
@@ -99,6 +116,8 @@ function negateFourByClick() {
   evalExpression();
 
 }
+
+// Evaluation
 
 function evalExpression() {
   // console.log(`running 'evalExpression'...activeRowId: ${activeRowId}`);
@@ -127,6 +146,7 @@ function evalExpression() {
   console.log(evaluatedRPN);
   console.log('\n');
 
+
   tokenizedExpression = tokenizedExpression.map(el => el.value).join('');
   rpn = rpn.map(el => el.value).join('');
 
@@ -139,10 +159,15 @@ function evalExpression() {
     if ( evaluatedRPN === activeRow ) {
       $(activeRowId).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
       $(activeRowId).children().css('border-style', 'none');
+      $(`#equalsOrEqualsNot${activeRow}`).removeClass('equalsNot').addClass('equals');
       insertRow();
     } else {
-      $(activeRowId).removeClass('noResult rightResult tada wrongResult horizontal').addClass('wrongResult horizontal');
+      $(activeRowId).removeClass('noResult rightResult wrongResult tada horizontal').addClass('wrongResult horizontal');
+      $(`#equalsOrEqualsNot${activeRow}`).removeClass('equals').addClass('equalsNot');
     }
+
+  } else {
+    $(activeRowId).removeClass('noResult rightResult wrongResult tada horizontal').addClass('noResult');
 
   }
 
@@ -171,16 +196,6 @@ function playButtonClick() {
   $(this).hide();
   $('#operatorTiles').show();
 }
-
-$(document).ready(function() {
-
-  $('#startButton').on('click', playButtonClick);
-  // $('#buttonEval').on('click', evalExpression);
-  // $('#buttonReset').on('click', resetRow);
-
-  attachDragDropEventListeners()
-
-})
 
 function insertRow() {
   $(activeRowId).addClass('disabled');
@@ -213,7 +228,7 @@ function rowGenerator() {
     }
 
     function genBinaryOperatorDiv(gridPositionClass) {
-      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="binary" data-default-value=" " data-value=" "></div>`;
+      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="binary" data-default-value="B" data-value="B"></div>`;
     }
 
     function genParensDiv(parensTypeAccepted, gridPositionClass) {
@@ -229,7 +244,7 @@ function rowGenerator() {
     }
 
     function genEqualsDiv(gridPositionClass) {
-      return `<div class="staticSymbol equals ${gridPositionClass}" data-value="="></div>`;
+      return `<div id="equalsOrEqualsNot${activeRow}" class="staticSymbol equalsNot ${gridPositionClass}" data-value="="></div>`;
     }
 
     function genRequiredResultDiv(gridPositionClass) {
@@ -258,7 +273,14 @@ function tokenize(lhs) {
 
   lhs.forEach(function(char, i) {
     console.log(`Token: ${char}`);
-    if (isDigit(char)) {
+
+    // 'B' is a break character to prevent evaluation
+    if (char === "B") {
+      console.log('in char === "B" condition');
+
+      result.push(new Token('Break', 'B'));
+
+    } else if (isDigit(char)) {
 
       if (prevCharRightParens) {
         console.log('PUSH A MULTIPLICATION');
@@ -329,6 +351,8 @@ function tokenize(lhs) {
   return result;
 }
 
+// Parsing
+
 function parseTokenizedExpressionToRPN(tokenizedExpression) {
   var stack = [];
   var outputQueue = [];
@@ -384,6 +408,8 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
         stack.pop();
       } else if (t.type === "Factorial") {
         outputQueue.push(t);
+      } else if (t.type === "Break") {
+        outputQueue.push(t);
       }
     });
 
@@ -394,6 +420,8 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
   //.join(" ");
 
   }
+
+// Evaluating
 
 function evaluateRPN(rpn) {
 
@@ -441,6 +469,8 @@ function evaluateRPN(rpn) {
     } else if (t.type === "Factorial") {
       op1 = stack.pop();
       stack.push(factorialize(op1));
+    } else if (t.type === "Break") {
+      stack.push(t.value);
     }
   });
   console.log(stack.length);
@@ -460,6 +490,8 @@ function evaluateRPN(rpn) {
   }
 
 }
+
+// Tokenizing, Parsing, and Evaluating helper functions
 
 function factorialize(num) {
   if (num < 0)

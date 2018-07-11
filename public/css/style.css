@@ -139,6 +139,10 @@ body {
   grid-area: equals;
 }
 
+.equalsNot {
+  grid-area: equals;
+}
+
 .fact1 {
   grid-area: fact1;
 }
@@ -264,6 +268,10 @@ body {
   background-size: contain;
 }
 
+.equalsNot {
+  background: url('/images/equalsNot.png') no-repeat center center;
+  background-size: contain;
+}
 /* Sizing */
 
 .gameContainer {
