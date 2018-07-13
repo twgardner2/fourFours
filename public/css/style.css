@@ -19,7 +19,85 @@
   --grid-equalsWidth: 2.50fr;
   --grid-resultWidth: 1.50fr;
   --grid-scalar: 0.05;
+
 }
+
+/* CSS for newDrag Test */
+:root {
+  --four-width: 1fr;
+  --dropZone-width: 5fr;
+}
+
+div {
+  text-align: center;
+}
+
+#dropZoneContainer {
+  display: grid;
+  grid-template-columns: var(--dropZone-width) var(--four-width) var(--dropZone-width) var(--four-width) var(--dropZone-width) var(--four-width) var(--dropZone-width) var(--four-width) var(--dropZone-width);
+  grid-template-rows: 1fr;
+
+
+  flex-direction: row; */
+  flex-wrap: nowrap;
+  align-items: center;
+  width: 600px;
+  height: 70px;
+  padding: 2px;
+  border: 1px solid black;
+
+  min-height: 0;  /* NEW */
+  min-width: 0;
+}
+
+.fourDiv {
+  flex-basis: auto;
+  height: 100%;
+
+  border: 2px dashed blue;
+}
+
+.newDropZone {
+  display: flex;
+  flex: 0 0 25em;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+
+  /* flex: 1 1 0; */
+
+  height: 70px;
+  padding: 0px;
+  border: 1px solid black;
+}
+
+.newTile {
+  height: 50px;
+  flex-basis: 30px;
+  border: 1px solid black;
+
+  overflow: hidden;
+  min-width: 0;
+}
+
+#tileContainer {
+  margin: 10px;
+  padding: 15px;
+  background: lightgray;
+  border-radius: 10px;
+  border: 2px solid #1d1d1d;
+  height: 100px;
+  width: 720px;
+  display: grid;
+  grid-gap: 0px 10px;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 1fr ;
+
+}
+
+/* ^^^ CSS for newDrag Test ^^^ */
+
+
 
 * {
   box-sizing: border-box;

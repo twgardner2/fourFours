@@ -1,5 +1,4 @@
 // To Do:
-/// When wrong, make equals sign a not equals sign
 /// Add factorial
 /// Evaluation: prevent until at least 3 binary operators added
 /// Remove Bootstrap?
@@ -24,6 +23,14 @@ $(document).ready(function() {
   // $('#buttonReset').on('click', resetRow);
 
   attachDragDropEventListeners()
+
+  // new Draggable(containers: '#operatorTiles', options: {}): Draggable;
+  const draggable = new Draggable.Draggable(document.querySelectorAll('#operatorTiles'), {
+    draggable: 'div'
+  });
+  draggable.on('drag:start', () => console.log('drag:start'));
+  draggable.on('drag:move', () => console.log('drag:move'));
+  draggable.on('drag:stop', () => console.log('drag:stop'));
 
 })
 
@@ -180,12 +187,15 @@ function resetRow() {
 }
 
 function attachDragDropEventListeners() {
-  $('.draggable').on('dragstart', handleDragStart);
-  $('.draggable').on('dragend', handleDragEnd);
-  $('.dropZone').on('dragover', handleDragOver);
-  $('.dropZone').on('dragenter', handleDragEnter);
-  $('.dropZone').on('dragleave', handleDragLeave);
-  $('.dropZone').on('drop', handleDrop);
+  // $('.draggable').on('dragstart', handleDragStart);
+  // $('.draggable').on('dragend', handleDragEnd);
+  // $('.dropZone').on('dragover', handleDragOver);
+  // $('.dropZone').on('dragenter', handleDragEnter);
+  // $('.dropZone').on('dragleave', handleDragLeave);
+  // $('.dropZone').on('drop', handleDrop);
+  new Draggable.Draggable(document.querySelectorAll('#operatorTiles'), {
+    draggable: 'div'
+  });
 
   $('.dropZone').on('click', resetDropZone);
   $('.four').on('click', negateFourByClick);
@@ -521,4 +531,85 @@ function isRightParens(ch) {
 
 function isFactorial(ch) {
   return (ch === "!");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// newDrag Test
+
+
+function newAllowDrop(ev) {
+    ev.preventDefault();
+}
+
+function newDrag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function newDrop(ev, el) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+
+    var dropX = null;
+    dropX = ev.clientX;
+
+    var currentOccupants;
+    var currentOccupantsCenterX = [];
+    var childrenToRightOfDropX = [];
+    var childImmediatelyToRightOfDropX;
+
+
+    currentOccupants = el.children;
+
+    for (var i = 0; i < currentOccupants.length; i++) {
+      currentOccupantsCenterX.push(getOffset(currentOccupants[i]).center_x);
+      console.log('currentOccupantsCenterX');
+      console.log(currentOccupantsCenterX);
+      if ( currentOccupantsCenterX[i] > dropX ) {
+        childrenToRightOfDropX.push(i);
+      }
+      console.log('childrenToRightOfDropX:');
+      console.log(childrenToRightOfDropX);
+    }
+
+    childImmediatelyToRightOfDropX = Math.min(childrenToRightOfDropX);
+    console.log(childImmediatelyToRightOfDropX);
+
+    el.insertBefore(document.getElementById(data), el.children[childImmediatelyToRightOfDropX]);
+    // el.appendChild(document.getElementById(data));
+
+
+
+    console.log(`X-position of Current Occupants of Drop Zone: ${currentOccupantsCenterX}`);
+
+    function getOffset( el ) {
+      var _x = 0;
+      var center_x = 0;
+      var width = 0;
+
+      var _y = 0;
+      var center_y = 0;
+      var height = 0;
+
+      while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+          _x += el.offsetLeft - el.scrollLeft;
+          center_x = _x + el.offsetWidth/2;
+
+          _y += el.offsetTop - el.scrollTop;
+          center_y = _y + el.offsetHeight/2;
+
+          el = el.offsetParent;
+      }
+      return { top: _y, left: _x, center_y: center_y, center_x: center_x };
+    }
+
 }
