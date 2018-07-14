@@ -7,8 +7,8 @@
 var activeRow = 0;
 var activeRowId = "#foursRow0";
 
-var dragSourceElement = null;
 var tileType = null;
+var dragSourceElement = null;
 var tileValue = null;
 
 var tokenizedExpression;
@@ -25,12 +25,23 @@ $(document).ready(function() {
   attachDragDropEventListeners()
 
   // new Draggable(containers: '#operatorTiles', options: {}): Draggable;
-  const draggable = new Draggable.Draggable(document.querySelectorAll('#operatorTiles'), {
-    draggable: 'div'
-  });
-  draggable.on('drag:start', () => console.log('drag:start'));
-  draggable.on('drag:move', () => console.log('drag:move'));
-  draggable.on('drag:stop', () => console.log('drag:stop'));
+  // const draggable = new Draggable.Draggable(document.querySelectorAll('#operatorTiles'), {
+  //   draggable: 'div'
+  // });
+  // draggable.on('drag:start', () => console.log('drag:start'));
+  // draggable.on('drag:move', () => console.log('drag:move'));
+  // draggable.on('drag:stop', () => console.log('drag:stop'));
+
+  document.querySelector("body").addEventListener("click", clickPositionToConsole);
+
+  // document.querySelector("body").childNodes.forEach(function(node) {
+  //   console.log(node);
+  //   node.addEventListener("click", getElementPosition);
+  // });
+  // document.querySelectorAll('body *').forEach(function(node) {
+  //   console.log(node);
+  //   node.addEventListener("click", getElementPosition);
+  // });
 
 })
 
@@ -193,9 +204,9 @@ function attachDragDropEventListeners() {
   // $('.dropZone').on('dragenter', handleDragEnter);
   // $('.dropZone').on('dragleave', handleDragLeave);
   // $('.dropZone').on('drop', handleDrop);
-  new Draggable.Draggable(document.querySelectorAll('#operatorTiles'), {
-    draggable: 'div'
-  });
+  // new Draggable.Draggable(document.querySelectorAll('#operatorTiles'), {
+  //   draggable: 'div'
+  // });
 
   $('.dropZone').on('click', resetDropZone);
   $('.four').on('click', negateFourByClick);
@@ -556,38 +567,39 @@ function newDrag(ev) {
 }
 
 function newDrop(ev, el) {
+    console.log('\n');
+    console.log('\n');
+
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
 
     var dropX = null;
     dropX = ev.clientX;
+    console.log(`Drop X: ${dropX}`);
 
     var currentOccupants;
     var currentOccupantsCenterX = [];
     var childrenToRightOfDropX = [];
-    var childImmediatelyToRightOfDropX;
-
+    var numChildrenToRightOfDropX;
 
     currentOccupants = el.children;
 
     for (var i = 0; i < currentOccupants.length; i++) {
-      currentOccupantsCenterX.push(getOffset(currentOccupants[i]).center_x);
-      console.log('currentOccupantsCenterX');
-      console.log(currentOccupantsCenterX);
+
+      currentOccupantsCenterX.push(getElementCenterX(currentOccupants[i]));
       if ( currentOccupantsCenterX[i] > dropX ) {
         childrenToRightOfDropX.push(i);
       }
-      console.log('childrenToRightOfDropX:');
-      console.log(childrenToRightOfDropX);
     }
+    console.log('occupant center Xs');
+    console.log(currentOccupantsCenterX);
+    console.log(`# right of drop: ${childrenToRightOfDropX.length}`);
 
-    childImmediatelyToRightOfDropX = Math.min(childrenToRightOfDropX);
-    console.log(childImmediatelyToRightOfDropX);
-
-    el.insertBefore(document.getElementById(data), el.children[childImmediatelyToRightOfDropX]);
+    numChildrenToRightOfDropX = childrenToRightOfDropX.length;
+    console.log(`length torightofdrop: ${childrenToRightOfDropX.length}`);
+    console.log(`el.children.length: ${el.children.length}`);
+    el.insertBefore(document.getElementById(data), el.children[el.children.length - numChildrenToRightOfDropX]);
     // el.appendChild(document.getElementById(data));
-
-
 
     console.log(`X-position of Current Occupants of Drop Zone: ${currentOccupantsCenterX}`);
 
@@ -612,4 +624,48 @@ function newDrop(ev, el) {
       return { top: _y, left: _x, center_y: center_y, center_x: center_x };
     }
 
+    function getElementCenterX(el) {
+      var x = el.getBoundingClientRect().x;
+      var width = el.getBoundingClientRect().width;
+
+      return x + width/2;
+
+
+    }
+
+}
+
+function clickPositionToConsole(ev, el) {
+  console.log(`Click x-coord: ${ev.clientX}`);
+}
+
+function getElementPosition(ev) {
+  ev.stopPropagation();
+  var xPos = 0;
+  var yPos = 0;
+  var el = this;
+  console.log("\n");
+  while(el) {
+    console.log(`Node tag: ${el.tagName} ${el.id}`);
+    console.log(el.getBoundingClientRect());
+    if(el.tagName == "BODY") {
+      var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+      var yScroll = el.scrollTop || document.documentElement.scrollTop;
+      xPos += (el.offsetLeft - xScroll + el.clientLeft);
+      yPos += (el.offsetTop - yScroll + el.clientTop);
+    } else {
+      xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+      yPos += (el.offsetTop - el.scrollTop + el.clientTop);
+    }
+    console.log(`x-position: ${xPos}`);
+
+    el = el.offsetParent;
+  }
+  console.log(`final x-position: ${xPos}`);
+  return xPos;
+
+  // return {
+  //   x: xPos,
+  //   y: yPos
+  // };
 }
