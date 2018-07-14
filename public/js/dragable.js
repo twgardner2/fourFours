@@ -7,7 +7,7 @@
 var activeRow = 0;
 var activeRowId = "#foursRow0";
 
-var tileType = null;
+// var tileType = null;
 var dragSourceElement = null;
 var tileValue = null;
 
@@ -52,12 +52,14 @@ function handleDragStart(e) {
   $(this).addClass('duringDrag').removeClass('draggable');
 
   dragSourceElement = this;
-  e.originalEvent.dataTransfer.effectAllowed = 'move';
+  e.originalEvent.dataTransfer.effectAllowed = 'copy';
   e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
   e.originalEvent.dataTransfer.setData('text/plain', this.dataset.value);
+  e.originalEvent.dataTransfer.setData("text", e.target.id);
+  e.originalEvent.dataTransfer.setData("tile", e.target.dataset.operator);
 
-  e.originalEvent.dataTransfer.setData('operatorType', this.dataset.operatorType);
-  tileType = this.dataset.operatorType;
+  // e.originalEvent.dataTransfer.setData('operatorType', this.dataset.operatorType);
+  // tileType = this.dataset.operatorType;
   tileValue = this.dataset.operator;
 }
 
@@ -73,16 +75,14 @@ function handleDragOver(e) {
   if (e.preventDefault) {
     e.preventDefault();
   }
-  e.originalEvent.dataTransfer.dropEffect = 'move';
+  e.originalEvent.dataTransfer.dropEffect = 'copy';
   return false;
 }
 
 function handleDragEnter(e) {
   // console.log(`running 'handleDragEnter'...`);
 
-  if (tileType.includes(this.dataset.operatorAccepted)) {
-    $(this).addClass('over');
-  }
+  $(this).addClass('over');
 
 }
 
@@ -91,6 +91,74 @@ function handleDragLeave() {
 
   $(this).removeClass('over');
 }
+
+
+
+function newDrop(ev, el) {
+  ev.preventDefault();
+  if (ev.stopPropagation) ev.stopPropagation();
+
+
+
+  if(!ev.target.classList.contains("dropZone")) {
+    dropZone = ev.target.closest(".dropZone");
+  } else {
+    dropZone = ev.target;
+  }
+
+  // var dropZone = ev.target;
+  console.log(dropZone);
+
+  var dropX = ev.clientX;
+  console.log(`Drop X: ${dropX}`);
+
+  var operatorTypeToInsert = ev.originalEvent.dataTransfer.getData("tile");
+  var newNode = genTileToDrop(operatorTypeToInsert);
+
+  var nodeToInsertBefore;
+  var currentOccupants;
+  var currentOccupantsCenterX = [];
+  var childrenToRightOfDropX = [];
+  var numChildrenToRightOfDropX;
+
+  currentOccupants = dropZone.children;
+
+  for (var i = 0; i < currentOccupants.length; i++) {
+    currentOccupantsCenterX.push(getElementCenterX(currentOccupants[i]));
+    if (currentOccupantsCenterX[i] > dropX) {
+      childrenToRightOfDropX.push(i);
+    }
+  }
+  // console.log('occupant center Xs');
+  // console.log(currentOccupantsCenterX);
+  // console.log(`# right of drop: ${childrenToRightOfDropX.length}`);
+
+  numChildrenToRightOfDropX = childrenToRightOfDropX.length;
+  // console.log(`length torightofdrop: ${childrenToRightOfDropX.length}`);
+  // console.log(`el.children.length: ${dropZone.children.length}`);
+  nodeToInsertBefore = dropZone.children[ dropZone.children.length - numChildrenToRightOfDropX ];
+  // dropZone.insertBefore(document.getElementById(data), el.children[el.children.length - numChildrenToRightOfDropX]);
+
+  dropZone.insertBefore(newNode, nodeToInsertBefore);
+
+  ev.target.classList.remove('over');
+
+  // console.log(`X-position of Current Occupants of Drop Zone: ${currentOccupantsCenterX}`);
+
+  function getElementCenterX(el) {
+    var x = el.getBoundingClientRect().x;
+    var width = el.getBoundingClientRect().width;
+
+    return x + width / 2;
+
+
+  }
+
+}
+
+
+
+
 
 function handleDrop(e) {
   // console.log(`running 'handleDrop'...`);
@@ -172,9 +240,9 @@ function evalExpression() {
   $('#expressionRPN').text(rpn);
   $('#evalResult').text(evaluatedRPN);
 
-  if ( evaluatedRPN || evaluatedRPN === 0 ) {
+  if (evaluatedRPN || evaluatedRPN === 0) {
 
-    if ( evaluatedRPN === activeRow ) {
+    if (evaluatedRPN === activeRow) {
       $(activeRowId).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
       $(activeRowId).children().css('border-style', 'none');
       $(`#equalsOrEqualsNot${activeRow}`).removeClass('equalsNot').addClass('equals');
@@ -198,12 +266,13 @@ function resetRow() {
 }
 
 function attachDragDropEventListeners() {
-  // $('.draggable').on('dragstart', handleDragStart);
-  // $('.draggable').on('dragend', handleDragEnd);
-  // $('.dropZone').on('dragover', handleDragOver);
-  // $('.dropZone').on('dragenter', handleDragEnter);
-  // $('.dropZone').on('dragleave', handleDragLeave);
-  // $('.dropZone').on('drop', handleDrop);
+  $('.draggable').on('dragstart', handleDragStart);
+  $('.draggable').on('dragend', handleDragEnd);
+  $('.dropZone').on('dragover', handleDragOver);
+  $('.dropZone').on('dragenter', handleDragEnter);
+  $('.dropZone').on('dragleave', handleDragLeave);
+  // $('.dropZone').on('drop', function() {console.log("DROP!");});
+  $('.foursRow').on('drop', '.dropZone', newDrop);
   // new Draggable.Draggable(document.querySelectorAll('#operatorTiles'), {
   //   draggable: 'div'
   // });
@@ -228,51 +297,47 @@ function insertRow() {
 
 function rowGenerator() {
 
-  newRowHTML = `  <div id="foursRow${activeRow}" class="row foursRow noResult"> ` +
+  newRowHTML = `<div id="foursRow${activeRow}" class="row foursRow noResult"> ` +
 
-    `${genParensDiv("parensOpen", "p1")} ${genFourDiv("four1")} ${genFactorialDiv("fact1")}  ${genExpDiv("e1")}` +
-
-    `${genBinaryOperatorDiv("b1")} ${genParensDiv("parensOpen", "p2")} ${genFourDiv("four2")} ${genExpDiv("e2")} ${genParensDiv("parensClose", "p3")}` +
-
-    `${genBinaryOperatorDiv("b2")} ${genParensDiv("parensOpen", "p4")} ${genFourDiv("four3")} ${genExpDiv("e3")} ${genParensDiv("parensClose", "p5")}` +
-
-    `${genBinaryOperatorDiv("b3")}                                     ${genFourDiv("four4")} ${genExpDiv("e4")} ${genParensDiv("parensClose", "p6")}` +
+    `${genDropZoneDiv("dropZone1")} ${genFourDiv("four1")} ${genDropZoneDiv("dropZone2")} ${genFourDiv("four2")} ${genDropZoneDiv("dropZone3")} ${genFourDiv("four3")} ${genDropZoneDiv("dropZone4")} ${genFourDiv("four4")} ${genDropZoneDiv("dropZone5")}` +
 
     `${genEqualsDiv("equals")} ${genRequiredResultDiv("result")}` +
 
     `</div>`;
 
-    return newRowHTML;
+  return newRowHTML;
 
-    function genFourDiv(gridPositionClass) {
-      return `<div class="staticSymbol four ${gridPositionClass}" data-value-default="(4" data-value-negative="((0-4)" data-value="(4"></div>`;
-    }
+  function genFourDiv(gridPositionClass) {
+    return `<div class="staticSymbol four ${gridPositionClass}"></div>`;
+  }
 
-    function genBinaryOperatorDiv(gridPositionClass) {
-      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="binary" data-default-value="B" data-value="B"></div>`;
-    }
+  function genDropZoneDiv(gridPositionClass) {
+    return `<div class="dropZone ${gridPositionClass}"></div>`;
 
-    function genParensDiv(parensTypeAccepted, gridPositionClass) {
-      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="${parensTypeAccepted}" data-default-value=" " data-value=" "></div>`;
-    }
+  }
 
-    function genFactorialDiv(gridPositionClass) {
-      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="factorial" data-default-value=" " data-value=" "></div>`;
-    }
+  function genEqualsDiv(gridPositionClass) {
+    return `<div id="equalsOrEqualsNot${activeRow}" class="staticSymbol equalsNot ${gridPositionClass}" data-value="="></div>`;
+  }
 
-    function genExpDiv(gridPositionClass) {
-      return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="exponent" data-default-value="^1)" data-value="^1)"></div>`;
-    }
-
-    function genEqualsDiv(gridPositionClass) {
-      return `<div id="equalsOrEqualsNot${activeRow}" class="staticSymbol equalsNot ${gridPositionClass}" data-value="="></div>`;
-    }
-
-    function genRequiredResultDiv(gridPositionClass) {
-      return `<div id="requiredResult" class="staticSymbol ${gridPositionClass}" data-value="${activeRow}"> ${activeRow} </div>`;
-    }
+  function genRequiredResultDiv(gridPositionClass) {
+    return `<div id="requiredResult" class="staticSymbol ${gridPositionClass}" data-value="${activeRow}"> ${activeRow} </div>`;
+  }
 
 }
+
+// div Appenders
+
+function genTileToDrop(operatorTypeToAppend) {
+  var newTile;
+  newTile = document.createElement('div')
+  newTile.classList.add(operatorTypeToAppend, "droppedTile");
+  newTile.setAttribute('draggable', 'true');
+  newTile.setAttribute('data-operator', operatorTypeToAppend);
+  return newTile;
+
+}
+
 
 // Tokenizing
 
@@ -350,9 +415,9 @@ function tokenize(lhs) {
       result.push(new Token('RightParens', char));
       prevCharRightParens = true;
 
-    } else if ( isFactorial(char) ) {
+    } else if (isFactorial(char)) {
       console.log(`token is factorial`);
-      if(numBuffer.length) {
+      if (numBuffer.length) {
         emptyNumBufferAsLiteral();
       }
       result.push(new Token('Factorial', char));
@@ -410,29 +475,29 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
   };
 
   tokenizedExpression.forEach(function(t) {
-      // If Literal, push to output queue'dragable.js'
+    // If Literal, push to output queue'dragable.js'
 
-      if (t.type === "Literal") {
-        outputQueue.push(t);
-      } else if (t.type === "Operator") {
-        while (stack.peek() && (stack.peek().type === "Operator") && ((t.associativity() === "left" && t.precedence() <= stack.peek().precedence()) ||
-            (t.associativity() === "right" && t.precedence() < stack.peek().precedence()))) {
-          outputQueue.push(stack.pop());
-        }
-        stack.push(t);
-      } else if (t.type === "LeftParens") {
-        stack.push(t);
-      } else if (t.type === "RightParens") {
-        while (stack.peek() && stack.peek().type !== "LeftParens") {
-          outputQueue.push(stack.pop());
-        }
-        stack.pop();
-      } else if (t.type === "Factorial") {
-        outputQueue.push(t);
-      } else if (t.type === "Break") {
-        outputQueue.push(t);
+    if (t.type === "Literal") {
+      outputQueue.push(t);
+    } else if (t.type === "Operator") {
+      while (stack.peek() && (stack.peek().type === "Operator") && ((t.associativity() === "left" && t.precedence() <= stack.peek().precedence()) ||
+          (t.associativity() === "right" && t.precedence() < stack.peek().precedence()))) {
+        outputQueue.push(stack.pop());
       }
-    });
+      stack.push(t);
+    } else if (t.type === "LeftParens") {
+      stack.push(t);
+    } else if (t.type === "RightParens") {
+      while (stack.peek() && stack.peek().type !== "LeftParens") {
+        outputQueue.push(stack.pop());
+      }
+      stack.pop();
+    } else if (t.type === "Factorial") {
+      outputQueue.push(t);
+    } else if (t.type === "Break") {
+      outputQueue.push(t);
+    }
+  });
 
   rpn = outputQueue.concat(stack.reverse());
 
@@ -440,7 +505,7 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
   // return rpn.map(token => token.value);
   //.join(" ");
 
-  }
+}
 
 // Evaluating
 
@@ -450,43 +515,43 @@ function evaluateRPN(rpn) {
   var op1;
   var op2;
 
-  rpn.forEach( function(t) {
+  rpn.forEach(function(t) {
     // console.log(t);
-    console.log(`Processing token: ${t.value}`);
+    // console.log(`Processing token: ${t.value}`);
 
-    if ( t.type === 'Literal' ) {
-      console.log(`pushing literal ${parseFloat(t.value)} to the stack`);
+    if (t.type === 'Literal') {
+      // console.log(`pushing literal ${parseFloat(t.value)} to the stack`);
       stack.push(parseFloat(t.value));
-      console.log(stack);
+      // console.log(stack);
 
-    } else if ( t.type === "Operator" ) {
+    } else if (t.type === "Operator") {
 
       op2 = stack.pop(); //console.log(`op2: ${op2}`);
       op1 = stack.pop(); //console.log(`op1: ${op1}`);
 
-      if ( t.value === "+" ) {
+      if (t.value === "+") {
         // console.log(`op1+op2: ${op1+op2}`);
         stack.push(op1 + op2);
-        console.log(stack);
-      } else if ( t.value === "-" ) {
+        // console.log(stack);
+      } else if (t.value === "-") {
         // console.log(`op1 - op2: ${op1 - op2}`);
         stack.push(op1 - op2);
-        console.log(stack);
-      } else if ( t.value === "*" ) {
+        // console.log(stack);
+      } else if (t.value === "*") {
         // console.log(`op1 * op2: ${op1 * op2}`);
         stack.push(op1 * op2);
-        console.log(stack);
-      } else if ( t.value === "/" ) {
+        // console.log(stack);
+      } else if (t.value === "/") {
         // console.log(`op1 / op2: ${op1 / op2}`);
         stack.push(op1 / op2);
-        console.log(stack);
+        // console.log(stack);
       } else if (t.value === "^") {
         // console.log(`op1 ^ op2: ${op1 ** op2}`);
         stack.push(op1 ** op2);
-        console.log(stack);
+        // console.log(stack);
 
       }
-      console.log('\n');
+      // console.log('\n');
     } else if (t.type === "Factorial") {
       op1 = stack.pop();
       stack.push(factorialize(op1));
@@ -494,14 +559,14 @@ function evaluateRPN(rpn) {
       stack.push(t.value);
     }
   });
-  console.log(stack.length);
-  console.log(stack);
+  // console.log(stack.length);
+  // console.log(stack);
 
   if (stack.length === 1) {
     var output;
     output = stack.pop();
 
-    if(output || output === 0) {
+    if (output || output === 0) {
       return output;
     } else {
       return undefined;
@@ -516,11 +581,11 @@ function evaluateRPN(rpn) {
 
 function factorialize(num) {
   if (num < 0)
-        return -1;
+    return -1;
   else if (num == 0)
-      return 1;
+    return 1;
   else {
-      return (num * factorialize(num - 1));
+    return (num * factorialize(num - 1));
   }
 }
 
@@ -552,120 +617,74 @@ function isFactorial(ch) {
 
 
 
-
-
-
 // newDrag Test
 
 
 function newAllowDrop(ev) {
-    ev.preventDefault();
+  ev.preventDefault();
 }
 
 function newDrag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
+  ev.dataTransfer.setData("text", ev.target.id);
 }
 
-function newDrop(ev, el) {
-    console.log('\n');
-    console.log('\n');
 
-    ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-
-    var dropX = null;
-    dropX = ev.clientX;
-    console.log(`Drop X: ${dropX}`);
-
-    var currentOccupants;
-    var currentOccupantsCenterX = [];
-    var childrenToRightOfDropX = [];
-    var numChildrenToRightOfDropX;
-
-    currentOccupants = el.children;
-
-    for (var i = 0; i < currentOccupants.length; i++) {
-
-      currentOccupantsCenterX.push(getElementCenterX(currentOccupants[i]));
-      if ( currentOccupantsCenterX[i] > dropX ) {
-        childrenToRightOfDropX.push(i);
-      }
-    }
-    console.log('occupant center Xs');
-    console.log(currentOccupantsCenterX);
-    console.log(`# right of drop: ${childrenToRightOfDropX.length}`);
-
-    numChildrenToRightOfDropX = childrenToRightOfDropX.length;
-    console.log(`length torightofdrop: ${childrenToRightOfDropX.length}`);
-    console.log(`el.children.length: ${el.children.length}`);
-    el.insertBefore(document.getElementById(data), el.children[el.children.length - numChildrenToRightOfDropX]);
-    // el.appendChild(document.getElementById(data));
-
-    console.log(`X-position of Current Occupants of Drop Zone: ${currentOccupantsCenterX}`);
-
-    function getOffset( el ) {
-      var _x = 0;
-      var center_x = 0;
-      var width = 0;
-
-      var _y = 0;
-      var center_y = 0;
-      var height = 0;
-
-      while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
-          _x += el.offsetLeft - el.scrollLeft;
-          center_x = _x + el.offsetWidth/2;
-
-          _y += el.offsetTop - el.scrollTop;
-          center_y = _y + el.offsetHeight/2;
-
-          el = el.offsetParent;
-      }
-      return { top: _y, left: _x, center_y: center_y, center_x: center_x };
-    }
-
-    function getElementCenterX(el) {
-      var x = el.getBoundingClientRect().x;
-      var width = el.getBoundingClientRect().width;
-
-      return x + width/2;
-
-
-    }
-
-}
 
 function clickPositionToConsole(ev, el) {
   console.log(`Click x-coord: ${ev.clientX}`);
 }
 
-function getElementPosition(ev) {
-  ev.stopPropagation();
-  var xPos = 0;
-  var yPos = 0;
-  var el = this;
-  console.log("\n");
-  while(el) {
-    console.log(`Node tag: ${el.tagName} ${el.id}`);
-    console.log(el.getBoundingClientRect());
-    if(el.tagName == "BODY") {
-      var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
-      var yScroll = el.scrollTop || document.documentElement.scrollTop;
-      xPos += (el.offsetLeft - xScroll + el.clientLeft);
-      yPos += (el.offsetTop - yScroll + el.clientTop);
-    } else {
-      xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
-      yPos += (el.offsetTop - el.scrollTop + el.clientTop);
-    }
-    console.log(`x-position: ${xPos}`);
+// function getElementPosition(ev) {
+//   ev.stopPropagation();
+//   var xPos = 0;
+//   var yPos = 0;
+//   var el = this;
+//   console.log("\n");
+//   while (el) {
+//     console.log(`Node tag: ${el.tagName} ${el.id}`);
+//     console.log(el.getBoundingClientRect());
+//     if (el.tagName == "BODY") {
+//       var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+//       var yScroll = el.scrollTop || document.documentElement.scrollTop;
+//       xPos += (el.offsetLeft - xScroll + el.clientLeft);
+//       yPos += (el.offsetTop - yScroll + el.clientTop);
+//     } else {
+//       xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+//       yPos += (el.offsetTop - el.scrollTop + el.clientTop);
+//     }
+//     console.log(`x-position: ${xPos}`);
+//
+//     el = el.offsetParent;
+//   }
+//   console.log(`final x-position: ${xPos}`);
+//   return xPos;
+//
+//   // return {
+//   //   x: xPos,
+//   //   y: yPos
+//   // };
+// }
+//
 
-    el = el.offsetParent;
-  }
-  console.log(`final x-position: ${xPos}`);
-  return xPos;
 
-  // return {
-  //   x: xPos,
-  //   y: yPos
-  // };
-}
+
+
+
+
+
+
+// function genBinaryOperatorDiv(gridPositionClass) {
+//   return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="binary" data-default-value="B" data-value="B"></div>`;
+// }
+//
+// function genParensDiv(parensTypeAccepted, gridPositionClass) {
+//   return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="${parensTypeAccepted}" data-default-value=" " data-value=" "></div>`;
+// }
+//
+// function genFactorialDiv(gridPositionClass) {
+//   return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="factorial" data-default-value=" " data-value=" "></div>`;
+// }
+//
+// function genExpDiv(gridPositionClass) {
+//   return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="exponent" data-default-value="^1)" data-value="^1)"></div>`;
+// }

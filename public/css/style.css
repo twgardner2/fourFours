@@ -10,7 +10,11 @@
   --color-highlightDropZone: rgba(255, 255, 255, 1.0);
   --color-textShadow: #446688;
   --color-background: rgba(230, 230, 230, 1);
-
+  --grid-foursRow-outerPadding: 0.05fr;
+  --grid-foursRow-dropZone: 1fr;
+  --grid-foursRow-four: 0.5fr;
+  --grid-foursRow-equals: 0.5fr;
+  --grid-foursRow-result: 0.5fr;
   --grid-parensWidth: 1.25fr;
   --grid-factorialWidth: 0.50fr;
   --grid-binaryWidth: 1.00fr;
@@ -19,41 +23,34 @@
   --grid-equalsWidth: 2.50fr;
   --grid-resultWidth: 1.50fr;
   --grid-scalar: 0.05;
-
 }
 
 /* CSS for newDrag Test */
+
 :root {
   --four-width: 1fr;
   --dropZone-width: 5fr;
-}
-
-div {
-  text-align: center;
 }
 
 #dropZoneContainer {
   display: grid;
   grid-template-columns: var(--dropZone-width) var(--four-width) var(--dropZone-width) var(--four-width) var(--dropZone-width) var(--four-width) var(--dropZone-width) var(--four-width) var(--dropZone-width);
   grid-template-rows: 1fr;
-
-
-  flex-direction: row; */
-  flex-wrap: nowrap;
+  flex-direction: row;
+  */ flex-wrap: nowrap;
   align-items: center;
   width: 600px;
   height: 70px;
   padding: 2px;
   border: 1px solid black;
-
-  min-height: 0;  /* NEW */
+  min-height: 0;
+  /* NEW */
   min-width: 0;
 }
 
 .fourDiv {
   flex-basis: auto;
   height: 100%;
-
   border: 2px dashed blue;
 }
 
@@ -63,11 +60,8 @@ div {
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: center;
-
   align-items: center;
-
   /* flex: 1 1 0; */
-
   height: 70px;
   padding: 0px;
   border: 1px solid black;
@@ -77,7 +71,6 @@ div {
   height: 50px;
   flex-basis: 30px;
   border: 1px solid black;
-
   overflow: hidden;
   min-width: 0;
 }
@@ -93,13 +86,10 @@ div {
   display: grid;
   grid-gap: 0px 10px;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: 1fr ;
-
+  grid-template-rows: 1fr;
 }
 
 /* ^^^ CSS for newDrag Test ^^^ */
-
-
 
 * {
   box-sizing: border-box;
@@ -121,110 +111,64 @@ body {
 /* Grid Layout */
 
 .foursRow {
+  display: grid;
+  grid-gap: 2px 2px;
+  grid-template-columns: var(--grid-foursRow-outerPadding) var(--grid-foursRow-dropZone) var(--grid-foursRow-four) var(--grid-foursRow-dropZone) var(--grid-foursRow-four) var(--grid-foursRow-dropZone) var(--grid-foursRow-four) var(--grid-foursRow-dropZone) var(--grid-foursRow-four) var(--grid-foursRow-dropZone) var(--grid-foursRow-equals) var(--grid-foursRow-result) var(--grid-foursRow-outerPadding);
+  grid-template-rows: 0.05fr 0.90fr 0.05fr;
+  grid-template-areas: ". . . . . . . . . . . . ." ". dropZone1 four1 dropZone2 four2 dropZone3 four3 dropZone4 four4 dropZone5 equals result ." ". . . . . . . . . . . . .";
+
   margin: 10px;
-  padding: 15px;
+  /* padding: 15px; */
   border-radius: 10px;
   border: 2px solid #1d1d1d;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
   transition: background 200ms;
   height: 150px;
   width: 720px;
-  display: grid;
-  grid-gap: 2px 2px;
-  grid-template-columns: var(--grid-parensWidth) var(--grid-fourWidth) var(--grid-factorialWidth) var(--grid-expWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-parensWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-parensWidth) var(--grid-binaryWidth) var(--grid-fourWidth) var(--grid-expWidth) var(--grid-parensWidth) var(--grid-equalsWidth) var(--grid-resultWidth);
-  grid-template-rows: 0.05fr 0.075fr 0.25fr 0.10fr 1fr 0.05fr 0.075fr;
-  grid-template-areas:
-  ".  .     .     e1 .  .  .     e2 .  .  .  .     e3 .  .  .     e4 .  .      .     "
-  "p1 .     .     e1 .  p2 .     e2 p3 .  p4 .     e3 p5 .  .     e4 p6 .      .     "
-  "p1 four1 fact1 e1 .  p2 four2 e2 p3 .  p4 four3 e3 p5 .  four4 e4 p6 .      result"
-  "p1 four1 fact1 .  .  p2 four2 .  p3 .  p4 four3 .  p5 .  four4 .  p6 .      result"
-  "p1 four1 fact1 .  b1 p2 four2 .  p3 b2 p4 four3 .  p5 b3 four4 .  p6 equals result"
-  "p1 four1 fact1 .  .  p2 four2 .  p3 .  p4 four3 .  p5 .  four4 .  p6 .      result"
-  "p1 .     .     .  .  p2 .     .  p3 .  p4 .     .  p5 .  .     .  p6 .      .     ";
-}
-
-.four2 {
-  grid-area: four2;
 }
 
 .four1 {
   grid-area: four1;
 }
 
-.e2 {
-  grid-area: e2;
-}
-
-.e1 {
-  grid-area: e1;
-}
-
-.b2 {
-  grid-area: b2;
-}
-
-.b1 {
-  grid-area: b1;
+.four2 {
+  grid-area: four2;
 }
 
 .four3 {
   grid-area: four3;
 }
 
-.p1 {
-  grid-area: p1;
-}
-
-.p2 {
-  grid-area: p2;
-}
-
-.p3 {
-  grid-area: p3;
-}
-
-.p4 {
-  grid-area: p4;
-}
-
-.e3 {
-  grid-area: e3;
-}
-
-.p5 {
-  grid-area: p5;
-}
-
-.b3 {
-  grid-area: b3;
-}
-
 .four4 {
   grid-area: four4;
 }
 
-.e4 {
-  grid-area: e4;
+.dropZone1 {
+  grid-area: dropZone1;
 }
 
-.p6 {
-  grid-area: p6;
+.dropZone2 {
+  grid-area: dropZone2;
 }
 
-.result {
-  grid-area: result;
+.dropZone3 {
+  grid-area: dropZone3;
+}
+
+.dropZone4 {
+  grid-area: dropZone4;
+}
+
+.dropZone5 {
+  grid-area: dropZone5;
 }
 
 .equals {
   grid-area: equals;
 }
 
-.equalsNot {
-  grid-area: equals;
-}
-
-.fact1 {
-  grid-area: fact1;
+.result {
+  grid-area: result;
 }
 
 #operatorTiles {
@@ -240,12 +184,7 @@ body {
   grid-gap: 0px 10px;
   grid-template-columns: calc(0.05*var(--grid-binaryWidth)) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-parensWidth) var(--grid-expWidth) var(--grid-expWidth) var(--grid-parensWidth);
   grid-template-rows: 0.1fr 0.5fr 1.0fr 0.5fr 0.1fr;
-  grid-template-areas:
-  ".    .     .       .      .          .           .    .       .        "
-  ".    .     .       .      parensOpen parensClose .    .       factorial"
-  "plus minus multily divide parensOpen parensClose sqrt squared factorial"
-  ".    .     .       .      parensOpen parensClose .    .       factorial"
-  ".    .     .       .      .          .           .    .       .        ";
+  grid-template-areas: ".    .     .       .      .          .           .    .       .        " ".    .     .       .      parensOpen parensClose .    .       factorial" "plus minus multily divide parensOpen parensClose sqrt squared factorial" ".    .     .       .      parensOpen parensClose .    .       factorial" ".    .     .       .      .          .           .    .       .        ";
 }
 
 .plusTileGrid {
@@ -352,6 +291,7 @@ body {
   background: url('/images/equalsNot.png') no-repeat center center;
   background-size: contain;
 }
+
 /* Sizing */
 
 .gameContainer {
@@ -387,7 +327,8 @@ div {
 }
 
 .banner {
-  /* height: 25vh; */
+  /* height: 20'style.css'
+vh; */
   background: skyblue;
   /* background: radial-gradient(skyblue, var(--color-background)); */
   text-align: center;
@@ -484,8 +425,6 @@ div {
   background: var(--color-noResult);
 }
 
-
-
 /* .foursRow div {
   margin-right: calc(0.1*var(--pri-width));
 } */
@@ -517,8 +456,15 @@ div {
 }
 
 .dropZone {
+  display: flex;
+  flex: 0 0 25em;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
   border: 1px dashed #abc;
   transition: transform 200ms;
+
 }
 
 .draggable {
@@ -527,6 +473,9 @@ div {
   box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.25);
   opacity: 1.0;
   transition: transform 200ms, box-shadow 200ms;
+  flex-basis: 20px;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .draggable:hover {
@@ -540,8 +489,15 @@ div {
   opacity: 0.4;
 }
 
-.dropped {
+.droppedTile {
   border: 1px none rgba(10, 10, 10, 0.4);
+  height: 100%;
+  width: 40px;
+  flex-basis: 14px;
+  overflow: hidden;
+  min-width: 0;
+
+
 }
 
 .dropZone, .draggable {
@@ -550,7 +506,6 @@ div {
   font-weight: bold;
   text-align: center;
 }
-
 
 [draggable] {
   -moz-user-select: none;
