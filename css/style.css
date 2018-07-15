@@ -230,7 +230,7 @@ body {
 /* Background Images */
 
 .four {
-  background: url('/images/four.png', 'https://twgardner2.github.io/fourFours') no-repeat center center;
+  background: url('../images/four.png') no-repeat center center;
   background-size: contain;
 }
 
