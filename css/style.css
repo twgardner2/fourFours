@@ -235,62 +235,62 @@ body {
 }
 
 .fourNeg {
-  background: url('/images/fourNeg.png') no-repeat center center;
+  background: url('../images/fourNeg.png') no-repeat center center;
   background-size: contain;
 }
 
 .plus {
-  background: url('/images/plus.png') no-repeat center center;
+  background: url('../images/plus.png') no-repeat center center;
   background-size: contain;
 }
 
 .minus {
-  background: url('/images/minus.png') no-repeat center center;
+  background: url('../images/minus.png') no-repeat center center;
   background-size: contain;
 }
 
 .multiply {
-  background: url('/images/multiply.png') no-repeat center center;
+  background: url('../images/multiply.png') no-repeat center center;
   background-size: contain;
 }
 
 .divide {
-  background: url('/images/divide.png') no-repeat center center;
+  background: url('../images/divide.png') no-repeat center center;
   background-size: contain;
 }
 
 .parensOpen {
-  background: url('/images/parensOpen.png') no-repeat center center;
+  background: url('../images/parensOpen.png') no-repeat center center;
   background-size: contain;
 }
 
 .parensClose {
-  background: url('/images/parensClose.png') no-repeat center center;
+  background: url('../images/parensClose.png') no-repeat center center;
   background-size: contain;
 }
 
 .squared {
-  background: url('/images/squared.png') no-repeat center center;
+  background: url('../images/squared.png') no-repeat center center;
   background-size: contain;
 }
 
 .sqrt {
-  background: url('/images/sqrt.png') no-repeat center center;
+  background: url('../images/sqrt.png') no-repeat center center;
   background-size: contain;
 }
 
 .factorial {
-  background: url('/images/factorial.png') no-repeat center center;
+  background: url('../images/factorial.png') no-repeat center center;
   background-size: contain;
 }
 
 .equals {
-  background: url('/images/equals.png') no-repeat center center;
+  background: url('../images/equals.png') no-repeat center center;
   background-size: contain;
 }
 
 .equalsNot {
-  background: url('/images/equalsNot.png') no-repeat center center;
+  background: url('../images/equalsNot.png') no-repeat center center;
   background-size: contain;
 }
 
