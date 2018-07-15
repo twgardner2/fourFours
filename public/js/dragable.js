@@ -24,24 +24,7 @@ $(document).ready(function() {
 
   attachDragDropEventListeners()
 
-  // new Draggable(containers: '#operatorTiles', options: {}): Draggable;
-  // const draggable = new Draggable.Draggable(document.querySelectorAll('#operatorTiles'), {
-  //   draggable: 'div'
-  // });
-  // draggable.on('drag:start', () => console.log('drag:start'));
-  // draggable.on('drag:move', () => console.log('drag:move'));
-  // draggable.on('drag:stop', () => console.log('drag:stop'));
-
   document.querySelector("body").addEventListener("click", clickPositionToConsole);
-
-  // document.querySelector("body").childNodes.forEach(function(node) {
-  //   console.log(node);
-  //   node.addEventListener("click", getElementPosition);
-  // });
-  // document.querySelectorAll('body *').forEach(function(node) {
-  //   console.log(node);
-  //   node.addEventListener("click", getElementPosition);
-  // });
 
 })
 
@@ -56,7 +39,8 @@ function handleDragStart(e) {
   e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
   e.originalEvent.dataTransfer.setData('text/plain', this.dataset.value);
   e.originalEvent.dataTransfer.setData("text", e.target.id);
-  e.originalEvent.dataTransfer.setData("tile", e.target.dataset.operator);
+  e.originalEvent.dataTransfer.setData("tileType", e.target.dataset.operator);
+  e.originalEvent.dataTransfer.setData("tileValue", e.target.dataset.value);
 
   // e.originalEvent.dataTransfer.setData('operatorType', this.dataset.operatorType);
   // tileType = this.dataset.operatorType;
@@ -107,13 +91,15 @@ function newDrop(ev, el) {
   }
 
   // var dropZone = ev.target;
-  console.log(dropZone);
+  // console.log(dropZone);
 
   var dropX = ev.clientX;
   console.log(`Drop X: ${dropX}`);
 
-  var operatorTypeToInsert = ev.originalEvent.dataTransfer.getData("tile");
-  var newNode = genTileToDrop(operatorTypeToInsert);
+  var operatorTypeToInsert = ev.originalEvent.dataTransfer.getData("tileType");
+  var tileValue = ev.originalEvent.dataTransfer.getData("tileValue");
+
+  var newNode = genTileToDrop(operatorTypeToInsert, tileValue);
 
   var nodeToInsertBefore;
   var currentOccupants;
@@ -150,9 +136,11 @@ function newDrop(ev, el) {
     var width = el.getBoundingClientRect().width;
 
     return x + width / 2;
-
-
   }
+
+  isCorrect = evalExpression();
+
+  return false;
 
 }
 
@@ -208,15 +196,10 @@ function negateFourByClick() {
 function evalExpression() {
   // console.log(`running 'evalExpression'...activeRowId: ${activeRowId}`);
 
-  var lhs = '';
   var requiredResult = null;
   var isCorrect = null;
-
-  $(activeRowId).children("div").each(function(index, el) {
-    lhs += el.dataset.value;
-  });
-  lhs = lhs.replace(/\s/g, '').substring(0, lhs.indexOf("="));
-
+  var lhs = constructLHS();
+  console.log(lhs);
   tokenizedExpression = tokenize(lhs);
   console.log('Tokenized Expression:');
   console.log(tokenizedExpression);
@@ -257,6 +240,27 @@ function evalExpression() {
 
   }
 
+}
+
+function constructLHS() {
+  var lhs = '';
+  var children = document.getElementById(`foursRow${activeRow}`).childNodes;
+  children.forEach(function(child) {
+    if(child.nodeName != "#text") {
+      if(child.classList.contains('dropZone')) {
+        var grandchildren = child.childNodes;
+        grandchildren.forEach(function(grandchild) {
+          lhs += grandchild.dataset.value;
+          console.log(lhs);
+        });
+      } else {
+        lhs += child.dataset.value;
+      }
+    }
+  });
+
+  lhs = lhs.replace(/\s/g, '').substring(0, lhs.indexOf("="));
+  return lhs;
 }
 
 function resetRow() {
@@ -308,7 +312,7 @@ function rowGenerator() {
   return newRowHTML;
 
   function genFourDiv(gridPositionClass) {
-    return `<div class="staticSymbol four ${gridPositionClass}"></div>`;
+    return `<div class="staticSymbol four ${gridPositionClass}" data-value-default='4' data-value-negative='(0-4)' data-value="4"></div>`;
   }
 
   function genDropZoneDiv(gridPositionClass) {
@@ -328,12 +332,13 @@ function rowGenerator() {
 
 // div Appenders
 
-function genTileToDrop(operatorTypeToAppend) {
+function genTileToDrop(operatorTypeToInsert, tileValue) {
   var newTile;
   newTile = document.createElement('div')
-  newTile.classList.add(operatorTypeToAppend, "droppedTile");
+  newTile.classList.add(operatorTypeToInsert, "droppedTile");
   newTile.setAttribute('draggable', 'true');
-  newTile.setAttribute('data-operator', operatorTypeToAppend);
+  newTile.setAttribute('data-operator', operatorTypeToInsert);
+  newTile.setAttribute('data-value', tileValue);
   return newTile;
 
 }
@@ -350,26 +355,28 @@ function tokenize(lhs) {
   var result = [];
   var numBuffer = [];
   var prevCharRightParens = false;
-
   // Remove whitespaces
   lhs.replace(/\s+/g, "");
-  lhs = lhs.substring(0, lhs.indexOf('='))
+  console.log(lhs);
+  // lhs = lhs.substring(0, lhs.indexOf('='))
   // Split out each character
   lhs = lhs.split('');
+  console.log(lhs);
 
   lhs.forEach(function(char, i) {
-    console.log(`Token: ${char}`);
+    // console.log(`Token: ${char}`);
 
     // 'B' is a break character to prevent evaluation
     if (char === "B") {
-      console.log('in char === "B" condition');
+      // console.log('in char === "B" condition');
 
       result.push(new Token('Break', 'B'));
 
     } else if (isDigit(char)) {
+      // console.log('char is digit');
 
       if (prevCharRightParens) {
-        console.log('PUSH A MULTIPLICATION');
+        // console.log('PUSH A MULTIPLICATION');
 
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
@@ -379,7 +386,7 @@ function tokenize(lhs) {
 
     } else if (char === ".") {
       if (prevCharRightParens) {
-        console.log('PUSH A MULTIPLICATION');
+        // console.log('PUSH A MULTIPLICATION');
 
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
@@ -398,17 +405,17 @@ function tokenize(lhs) {
     } else if (isLeftParens(char)) {
       if (numBuffer.length) {
         emptyNumBufferAsLiteral();
-        console.log('PUSH A MULTIPLICATION');
+        // console.log('PUSH A MULTIPLICATION');
         result.push(new Token('Operator', '*'));
       } else if (prevCharRightParens) {
-        console.log('PUSH A MULTIPLICATION');
+        // console.log('PUSH A MULTIPLICATION');
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
       }
       result.push(new Token('LeftParens', char));
 
     } else if (isRightParens(char)) {
-      console.log(`token is right parens`);
+      // console.log(`token is right parens`);
       if (numBuffer.length) {
         emptyNumBufferAsLiteral();
       }
@@ -425,6 +432,10 @@ function tokenize(lhs) {
     }
 
   });
+
+  if(numBuffer.length > 0) {
+    emptyNumBufferAsLiteral();
+  }
 
   function emptyNumBufferAsLiteral() {
     if (numBuffer.length) {
@@ -594,7 +605,7 @@ function isDigit(ch) {
 }
 
 function isOperator(ch) {
-  return /\+|-|\/|\^/.test(ch);
+  return /\+|-|\*|\/|\^/.test(ch);
 }
 
 function isLeftParens(ch) {
@@ -612,79 +623,6 @@ function isFactorial(ch) {
 
 
 
-
-
-
-
-
-// newDrag Test
-
-
-function newAllowDrop(ev) {
-  ev.preventDefault();
-}
-
-function newDrag(ev) {
-  ev.dataTransfer.setData("text", ev.target.id);
-}
-
-
-
 function clickPositionToConsole(ev, el) {
   console.log(`Click x-coord: ${ev.clientX}`);
 }
-
-// function getElementPosition(ev) {
-//   ev.stopPropagation();
-//   var xPos = 0;
-//   var yPos = 0;
-//   var el = this;
-//   console.log("\n");
-//   while (el) {
-//     console.log(`Node tag: ${el.tagName} ${el.id}`);
-//     console.log(el.getBoundingClientRect());
-//     if (el.tagName == "BODY") {
-//       var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
-//       var yScroll = el.scrollTop || document.documentElement.scrollTop;
-//       xPos += (el.offsetLeft - xScroll + el.clientLeft);
-//       yPos += (el.offsetTop - yScroll + el.clientTop);
-//     } else {
-//       xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
-//       yPos += (el.offsetTop - el.scrollTop + el.clientTop);
-//     }
-//     console.log(`x-position: ${xPos}`);
-//
-//     el = el.offsetParent;
-//   }
-//   console.log(`final x-position: ${xPos}`);
-//   return xPos;
-//
-//   // return {
-//   //   x: xPos,
-//   //   y: yPos
-//   // };
-// }
-//
-
-
-
-
-
-
-
-
-// function genBinaryOperatorDiv(gridPositionClass) {
-//   return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="binary" data-default-value="B" data-value="B"></div>`;
-// }
-//
-// function genParensDiv(parensTypeAccepted, gridPositionClass) {
-//   return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="${parensTypeAccepted}" data-default-value=" " data-value=" "></div>`;
-// }
-//
-// function genFactorialDiv(gridPositionClass) {
-//   return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="factorial" data-default-value=" " data-value=" "></div>`;
-// }
-//
-// function genExpDiv(gridPositionClass) {
-//   return `<div class="dropZone ${gridPositionClass}" data-operator-accepted="exponent" data-default-value="^1)" data-value="^1)"></div>`;
-// }
