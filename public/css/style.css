@@ -228,9 +228,8 @@ body {
 /* ^^^Grid Layout^^^ */
 
 /* Background Images */
-
 .four {
-  background: url('./images/four.png') no-repeat center center;
+  background: url('./images/four.png', 'https://github.io/twgardner2/fourFours') no-repeat center center;
   background-size: contain;
 }
 
