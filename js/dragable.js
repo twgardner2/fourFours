@@ -171,13 +171,13 @@ function handleDrop(e) {
 
 // Row Click Functions
 
-function resetDropZone() {
-  $(this).html('').removeClass('dropped plus minus multiply divide parensOpen parensClose squared sqrt factorial');
-  this.dataset.value = this.dataset.defaultValue;
+function clearOperatorByClickAndReevaluate() {
+  // console.log('CLEAR BY CLICK');
+  this.parentNode.removeChild(this);
   evalExpression();
 }
 
-function negateFourByClick() {
+function negateFourByClickAndReevaluate() {
   if (this.classList.contains('four')) {
     this.classList.remove("four");
     this.classList.add("fourNeg");
@@ -199,7 +199,7 @@ function evalExpression() {
   var requiredResult = null;
   var isCorrect = null;
   var lhs = constructLHS();
-  console.log(lhs);
+
   tokenizedExpression = tokenize(lhs);
   console.log('Tokenized Expression:');
   console.log(tokenizedExpression);
@@ -251,7 +251,7 @@ function constructLHS() {
         var grandchildren = child.childNodes;
         grandchildren.forEach(function(grandchild) {
           lhs += grandchild.dataset.value;
-          console.log(lhs);
+          // console.log(lhs);
         });
       } else {
         lhs += child.dataset.value;
@@ -263,11 +263,11 @@ function constructLHS() {
   return lhs;
 }
 
-function resetRow() {
-  $('.dropZone').html('').removeClass('over').removeClass('dropped');
-  $(activeRowId).removeClass('rightResult').removeClass('wrongResult');
-
-}
+// function resetRow() {
+//   $('.dropZone').html('').removeClass('over').removeClass('dropped');
+//   $(activeRowId).removeClass('rightResult').removeClass('wrongResult');
+//
+// }
 
 function attachDragDropEventListeners() {
   $('.draggable').on('dragstart', handleDragStart);
@@ -281,8 +281,9 @@ function attachDragDropEventListeners() {
   //   draggable: 'div'
   // });
 
-  $('.dropZone').on('click', resetDropZone);
-  $('.four').on('click', negateFourByClick);
+  $('.dropZone').on('click', '.droppedTile' , clearOperatorByClickAndReevaluate);
+
+  $('.four').on('click', negateFourByClickAndReevaluate);
 }
 
 function playButtonClick() {
@@ -357,11 +358,10 @@ function tokenize(lhs) {
   var prevCharRightParens = false;
   // Remove whitespaces
   lhs.replace(/\s+/g, "");
-  console.log(lhs);
-  // lhs = lhs.substring(0, lhs.indexOf('='))
+  // console.log(lhs);
   // Split out each character
   lhs = lhs.split('');
-  console.log(lhs);
+  // console.log(lhs);
 
   lhs.forEach(function(char, i) {
     // console.log(`Token: ${char}`);
