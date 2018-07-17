@@ -63,6 +63,90 @@ function handleDragOver(e) {
   return false;
 }
 
+function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
+  ev.preventDefault();
+  console.log(' ');
+  // Define 'offset' = (element's center x coord - dropZone's center x)/(dropZone width)
+  var dropZoneNode;
+  if(ev.target.classList.contains('droppedTile')) {
+    dropZoneNode = ev.target.parentNode;
+  } else {
+    dropZoneNode = ev.target;
+  }
+  var occupants = dropZoneNode.childNodes;
+  // console.log(occupants);
+
+  var numOccupantsOfDropZone = dropZoneNode.childNodes.length;
+  // console.log(`numOccupantsOfDropZone: ${numOccupantsOfDropZone}`);
+  var dropZoneWidth = dropZoneNode.clientWidth;
+
+  var occupantsCenterOffset = [];
+  occupants.forEach( function(occupant, i) {
+    var occupantCenterOffset = (1/numOccupantsOfDropZone)*(0.5 + i) - 0.5;
+    occupantsCenterOffset.push(occupantCenterOffset);
+  });
+  // console.log(`occupantsCenterOffset: ${occupantsCenterOffset}`);
+
+  var dropZoneCenter = getElementCenterX(dropZoneNode);
+  var mouseOffset = (Math.trunc(ev.clientX) - dropZoneCenter) / dropZoneWidth;
+
+  // occupants.forEach(function(occupant) {
+  //   console.log(occupant);
+  //   console.log(getElementCenterX(occupant));
+  //   occupantsCenter.push(getElementCenterX(occupant));
+  // });
+  // console.log(occupantsCenter);
+
+  var occupantsOffset = [];
+  var occupantsMouseOffset = [];
+
+  // occupants.forEach(function(occupant, index) {
+  //   var occupantOffset = (occupantsCenter[index] - dropZoneCenter) / dropZoneWidth;
+  //   occupantsOffset.push(occupantOffset);
+  // });
+
+  occupantsCenterOffset.forEach(function(occupantOffset) {
+    occupantsMouseOffset.push(occupantOffset - mouseOffset);
+  });
+
+  // console.log(`ev.clientX: ${ev.clientX}`);
+  // console.log(`mouseOffset: ${mouseOffset}`);
+  // console.log(occupantsMouseOffset);
+
+  // console.log('occupantsOffset:');
+  // console.log(occupantsOffset);
+  // console.log('occupantsMouseOffset');
+  // console.log(occupantsMouseOffset);
+
+  console.log(`mouseOffset: ${mouseOffset}`);
+
+  occupants.forEach(function(occupant, index) {
+    console.log(`index: ${index}`);
+    console.log(`nudge(occupantsMouseOffset[index]): ${nudge(occupantsMouseOffset[index])}`);
+    // console.log(nudge(`occupantsMouseOffset[${index}]: ${occupantsMouseOffset[index]}`));
+    $(occupant).css({'right' : -10 * nudge(occupantsMouseOffset[index] * 10) + 'px',
+                     'opacity' : 1 - Math.abs(nudge(occupantsMouseOffset[index])) });
+  });
+
+  // console.log(`deltaX: ${deltaX}`);
+  // $(this).css({'right' : deltaX + 'px'});
+  // var temp = getElementCenterX(this);
+  // console.log(temp);
+
+  function nudge(x) {
+    if (x < -3.1415 || x > 3.1415) {
+      return 0;
+    } else {
+      return Math.sin(x);
+    }
+  }
+
+}
+
+
+
+
+
 function handleDragEnter(e) {
   // console.log(`running 'handleDragEnter'...`);
 
@@ -82,19 +166,13 @@ function newDrop(ev, el) {
   ev.preventDefault();
   if (ev.stopPropagation) ev.stopPropagation();
 
-
+  var dropX = ev.clientX;
 
   if(!ev.target.classList.contains("dropZone")) {
     dropZone = ev.target.closest(".dropZone");
   } else {
     dropZone = ev.target;
   }
-
-  // var dropZone = ev.target;
-  // console.log(dropZone);
-
-  var dropX = ev.clientX;
-  console.log(`Drop X: ${dropX}`);
 
   var operatorTypeToInsert = ev.originalEvent.dataTransfer.getData("tileType");
   var tileValue = ev.originalEvent.dataTransfer.getData("tileValue");
@@ -129,14 +207,14 @@ function newDrop(ev, el) {
 
   ev.target.classList.remove('over');
 
+  ev.target.childNodes.forEach(function(occupant) {
+    occupant.style.right = "0px";
+    occupant.style.opacity = "1.0";
+  });
+
   // console.log(`X-position of Current Occupants of Drop Zone: ${currentOccupantsCenterX}`);
 
-  function getElementCenterX(el) {
-    var x = el.getBoundingClientRect().x;
-    var width = el.getBoundingClientRect().width;
 
-    return x + width / 2;
-  }
 
   isCorrect = evalExpression();
 
@@ -144,7 +222,15 @@ function newDrop(ev, el) {
 
 }
 
+function getElementCenterX(el) {
+  // console.log(`ELEMENT: ${el}`);
+  var x = el.getBoundingClientRect().x;
+  // console.log(`x: ${x}`);
+  var width = el.getBoundingClientRect().width;
+  // console.log(`width: ${width}`);
 
+  return x + width / 2;
+}
 
 
 
@@ -201,19 +287,19 @@ function evalExpression() {
   var lhs = constructLHS();
 
   tokenizedExpression = tokenize(lhs);
-  console.log('Tokenized Expression:');
-  console.log(tokenizedExpression);
-  console.log('\n');
+  // console.log('Tokenized Expression:');
+  // console.log(tokenizedExpression);
+  // console.log('\n');
 
   rpn = parseTokenizedExpressionToRPN(tokenizedExpression);
-  console.log('Parsed Expression (RPN):');
-  console.log(rpn);
-  console.log('\n');
+  // console.log('Parsed Expression (RPN):');
+  // console.log(rpn);
+  // console.log('\n');
 
   evaluatedRPN = evaluateRPN(rpn);
-  console.log('Result of evaluating RPN:');
-  console.log(evaluatedRPN);
-  console.log('\n');
+  // console.log('Result of evaluating RPN:');
+  // console.log(evaluatedRPN);
+  // console.log('\n');
 
 
   tokenizedExpression = tokenizedExpression.map(el => el.value).join('');
@@ -270,16 +356,26 @@ function constructLHS() {
 // }
 
 function attachDragDropEventListeners() {
-  $('.draggable').on('dragstart', handleDragStart);
-  $('.draggable').on('dragend', handleDragEnd);
+  // .dropZone drag events
   $('.dropZone').on('dragover', handleDragOver);
+  $('.dropZone').on('dragover', droppedTilesMoveAwayWhenDragZoneDraggedOver);
+
   $('.dropZone').on('dragenter', handleDragEnter);
   $('.dropZone').on('dragleave', handleDragLeave);
-  // $('.dropZone').on('drop', function() {console.log("DROP!");});
+
   $('.foursRow').on('drop', '.dropZone', newDrop);
-  // new Draggable.Draggable(document.querySelectorAll('#operatorTiles'), {
-  //   draggable: 'div'
-  // });
+
+  // .draggable drag events
+  $('.draggable').on('dragstart', handleDragStart);
+  $('.draggable').on('dragend', handleDragEnd);
+
+
+  // .droppedTile drag events
+  $('.dropZone').on('dragleave', '.droppedTile' , function(ev) { this.style.right =  "0px"; });
+  $('.dropZone').on('dragleave', '.droppedTile' , function(e) {
+    e.target.classList.remove('droppedTileBeingDraggedOver');
+  });
+
 
   $('.dropZone').on('click', '.droppedTile' , clearOperatorByClickAndReevaluate);
 

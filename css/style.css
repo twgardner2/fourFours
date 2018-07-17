@@ -464,6 +464,7 @@ vh; */
   justify-content: center;
   align-items: center;
   border: 1px dashed #abc;
+  border-radius: 10px;
   transition: transform 200ms;
 
 }
@@ -496,10 +497,20 @@ vh; */
   flex: 1 1 auto;
   overflow: hidden;
   max-width: 40%;
-  /* min-width: 0; */
-
+  /* testing bulging as new tile dragged over */
+  position: relative;
 
 }
+
+/* .droppedTileBeingDraggedOver {
+  top: -10px;
+} */
+
+/* .droppedTileBeingDraggedOver::before {
+  display: flex;
+  content: 'before';
+  /* opacity: 1; */
+} */
 
 .dropZone, .draggable {
   /* font-family: "Times New Roman", Times, serif; */
