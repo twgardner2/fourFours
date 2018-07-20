@@ -51,6 +51,10 @@ function handleDragEnd() {
   // console.log(`running 'handleDragEnd'...`);
 
   $(this).addClass('draggable').removeClass('duringDrag');
+
+  $('.droppedTile').css({'right' : '0px',
+                     'top' : '0px',
+                     'opacity' : '1'});
 }
 
 function handleDragOver(e) {
@@ -66,75 +70,51 @@ function handleDragOver(e) {
 function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
   ev.preventDefault();
   console.log(' ');
-  // Define 'offset' = (element's center x coord - dropZone's center x)/(dropZone width)
+
+  // Find the dropZone node affected by this event and its children (any operators previously dropped or "occupants")
   var dropZoneNode;
   if(ev.target.classList.contains('droppedTile')) {
+    console.log();
     dropZoneNode = ev.target.parentNode;
   } else {
     dropZoneNode = ev.target;
   }
   var occupants = dropZoneNode.childNodes;
-  // console.log(occupants);
 
+  // Determine each occupant's offset numerically (assume equally spaced)
+  // Define 'offset' = (occupant's center_x - dropZone's center_x)/(dropZone_width)
   var numOccupantsOfDropZone = dropZoneNode.childNodes.length;
-  // console.log(`numOccupantsOfDropZone: ${numOccupantsOfDropZone}`);
   var dropZoneWidth = dropZoneNode.clientWidth;
-
   var occupantsCenterOffset = [];
   occupants.forEach( function(occupant, i) {
     var occupantCenterOffset = (1/numOccupantsOfDropZone)*(0.5 + i) - 0.5;
     occupantsCenterOffset.push(occupantCenterOffset);
   });
-  // console.log(`occupantsCenterOffset: ${occupantsCenterOffset}`);
 
+  // Determine the mouse's offset
   var dropZoneCenter = getElementCenterX(dropZoneNode);
-  var mouseOffset = (Math.trunc(ev.clientX) - dropZoneCenter) / dropZoneWidth;
+  var mouseOffset = ((ev.clientX) - dropZoneCenter) / dropZoneWidth;
 
-  // occupants.forEach(function(occupant) {
-  //   console.log(occupant);
-  //   console.log(getElementCenterX(occupant));
-  //   occupantsCenter.push(getElementCenterX(occupant));
-  // });
-  // console.log(occupantsCenter);
-
-  var occupantsOffset = [];
+  // Determine each occupant's mouse mouseOffset
+  // Define mouseOffset as the difference between the occupantOffset and mouseOffset
   var occupantsMouseOffset = [];
-
-  // occupants.forEach(function(occupant, index) {
-  //   var occupantOffset = (occupantsCenter[index] - dropZoneCenter) / dropZoneWidth;
-  //   occupantsOffset.push(occupantOffset);
-  // });
-
   occupantsCenterOffset.forEach(function(occupantOffset) {
     occupantsMouseOffset.push(occupantOffset - mouseOffset);
   });
 
-  // console.log(`ev.clientX: ${ev.clientX}`);
-  // console.log(`mouseOffset: ${mouseOffset}`);
-  // console.log(occupantsMouseOffset);
-
-  // console.log('occupantsOffset:');
-  // console.log(occupantsOffset);
-  // console.log('occupantsMouseOffset');
-  // console.log(occupantsMouseOffset);
-
-  console.log(`mouseOffset: ${mouseOffset}`);
-
+  // Update occupant style for desired effect
   occupants.forEach(function(occupant, index) {
-    console.log(`index: ${index}`);
-    console.log(`nudge(occupantsMouseOffset[index]): ${nudge(occupantsMouseOffset[index])}`);
-    // console.log(nudge(`occupantsMouseOffset[${index}]: ${occupantsMouseOffset[index]}`));
-    $(occupant).css({'right' : -10 * nudge(occupantsMouseOffset[index] * 10) + 'px',
-                     'opacity' : 1 - Math.abs(nudge(occupantsMouseOffset[index])) });
+    console.log(`Mouse Position: ${ev.clientX}`);
+    console.log(`nudgeSine for Child: ${index}: ${nudgeSine(occupantsMouseOffset[index])}`);
+    console.log(-10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px');
+    $(occupant).css({'right' : -10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px',
+                     'top' : -10 * Math.abs(nudgeSine(occupantsMouseOffset[index] * 10)) + 'px',
+                     'opacity' : 1 - Math.abs(nudgeSine(occupantsMouseOffset[index])) });
   });
 
-  // console.log(`deltaX: ${deltaX}`);
-  // $(this).css({'right' : deltaX + 'px'});
-  // var temp = getElementCenterX(this);
-  // console.log(temp);
-
-  function nudge(x) {
-    if (x < -3.1415 || x > 3.1415) {
+  // Function to return 1 period of a sine wave
+  function nudgeSine(x) {
+    if (x < -3.14159 || x > 3.14159) {
       return 0;
     } else {
       return Math.sin(x);
@@ -207,10 +187,18 @@ function newDrop(ev, el) {
 
   ev.target.classList.remove('over');
 
-  ev.target.childNodes.forEach(function(occupant) {
-    occupant.style.right = "0px";
-    occupant.style.opacity = "1.0";
-  });
+
+  // ev.target.childNodes.forEach(function(occupant) {
+  //   $(occupant).css({'right' : '0px',
+  //                    'top' : '0px',
+  //                    'opacity' : '1'})
+  // });
+
+
+  // ev.target.childNodes.forEach(function(occupant) {
+  //   occupant.style.right = "0px";
+  //   occupant.style.opacity = "1.0";
+  // });
 
   // console.log(`X-position of Current Occupants of Drop Zone: ${currentOccupantsCenterX}`);
 
