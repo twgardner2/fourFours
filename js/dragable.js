@@ -1,5 +1,4 @@
 // To Do:
-/// Add factorial
 /// Evaluation: prevent until at least 3 binary operators added
 /// Remove Bootstrap?
 
@@ -7,9 +6,9 @@
 var activeRow = 0;
 var activeRowId = "#foursRow0";
 
-// var tileType = null;
 var dragSourceElement = null;
 var tileValue = null;
+var mouseClickToTileCenterOffset;
 
 var tokenizedExpression;
 var parsedExpression;
@@ -36,7 +35,6 @@ function handleDragStart(e) {
 
   dragSourceElement = this;
   e.originalEvent.dataTransfer.effectAllowed = 'copy';
-  e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
   e.originalEvent.dataTransfer.setData('text/plain', this.dataset.value);
   e.originalEvent.dataTransfer.setData("text", e.target.id);
   e.originalEvent.dataTransfer.setData("tileType", e.target.dataset.operator);
@@ -105,11 +103,12 @@ function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
   // Update occupant style for desired effect
   occupants.forEach(function(occupant, index) {
     console.log(`Mouse Position: ${ev.clientX}`);
-    console.log(`nudgeSine for Child: ${index}: ${nudgeSine(occupantsMouseOffset[index])}`);
-    console.log(-10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px');
+    console.log(`mouseOffset: ${mouseOffset}`);
+    // console.log(`nudgeSine for Child: ${index}: ${nudgeSine(occupantsMouseOffset[index])}`);
+    // console.log(-10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px');
     $(occupant).css({'right' : -10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px',
                      'top' : -10 * Math.abs(nudgeSine(occupantsMouseOffset[index] * 10)) + 'px',
-                     'opacity' : 1 - Math.abs(nudgeSine(occupantsMouseOffset[index])) });
+                     'opacity' : 1 - Math.abs(1.5 * Math.abs(nudgeSine(occupantsMouseOffset[index]))) });
   });
 
   // Function to return 1 period of a sine wave
@@ -220,28 +219,6 @@ function getElementCenterX(el) {
   return x + width / 2;
 }
 
-
-
-function handleDrop(e) {
-  // console.log(`running 'handleDrop'...`);
-
-  if (e.stopPropagation) {
-    e.stopPropagation();
-  }
-
-  var isCorrect;
-  // console.log(this);
-  if (dragSourceElement != this && tileType.includes(this.dataset.operatorAccepted)) {
-    // this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
-    this.dataset.value = e.originalEvent.dataTransfer.getData('text/plain');
-    $(this).removeClass('over plus minus multiply divide').addClass('dropped').addClass(tileValue);
-  }
-  tileType = null;
-
-  isCorrect = evalExpression();
-
-  return false;
-}
 
 // Row Click Functions
 
