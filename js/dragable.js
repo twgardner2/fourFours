@@ -116,7 +116,7 @@ function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
     // console.log(`nudgeSine for Child: ${index}: ${nudgeSine(occupantsMouseOffset[index])}`);
     // console.log(-10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px');
     $(occupant).css({'right' : -10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px',
-                     'top' : -10 * Math.abs(nudgeSine(occupantsMouseOffset[index] * 10)) + 'px',
+                     'top' : -5 * Math.abs(nudgeSine(occupantsMouseOffset[index] * 10)) + 'px',
                      'opacity' : 1 - Math.abs(1.5 * Math.abs(nudgeSine(occupantsMouseOffset[index]))) });
   });
 
