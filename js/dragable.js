@@ -8,11 +8,13 @@ var activeRowId = "#foursRow0";
 
 var dragSourceElement = null;
 var tileValue = null;
-var mouseClickToTileCenterOffset;
+
+// Global variable to correct for mouse offset from center of tile
+// when clicking to begin drag
+var dragMouseClickToTileCenterOffset;
 
 var tokenizedExpression;
 var parsedExpression;
-
 
 
 $(document).ready(function() {
@@ -43,6 +45,12 @@ function handleDragStart(e) {
   // e.originalEvent.dataTransfer.setData('operatorType', this.dataset.operatorType);
   // tileType = this.dataset.operatorType;
   tileValue = this.dataset.operator;
+
+  // console.log(`e.clientX: ${e.clientX}`);
+  // console.log(`clicked tile center x: ${getElementCenterX(this)}\n`);
+
+  dragMouseClickToTileCenterOffset = Math.trunc(e.clientX - getElementCenterX(this));
+  // console.log(`dragMouseClickToTileCenterOffset: ${dragMouseClickToTileCenterOffset}`);
 }
 
 function handleDragEnd() {
@@ -89,9 +97,10 @@ function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
     occupantsCenterOffset.push(occupantCenterOffset);
   });
 
-  // Determine the mouse's offset
+  // Determine the offset between the center of the tile being dragged and the center of the dropZone
+  // Note: Center of tile being dragged = ev.clientX - dragMouseClickToTileCenterOffset
   var dropZoneCenter = getElementCenterX(dropZoneNode);
-  var mouseOffset = ((ev.clientX) - dropZoneCenter) / dropZoneWidth;
+  var mouseOffset = ((ev.clientX - dragMouseClickToTileCenterOffset) - dropZoneCenter) / dropZoneWidth;
 
   // Determine each occupant's mouse mouseOffset
   // Define mouseOffset as the difference between the occupantOffset and mouseOffset
@@ -122,10 +131,6 @@ function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
 
 }
 
-
-
-
-
 function handleDragEnter(e) {
   // console.log(`running 'handleDragEnter'...`);
 
@@ -139,13 +144,11 @@ function handleDragLeave() {
   $(this).removeClass('over');
 }
 
-
-
 function newDrop(ev, el) {
   ev.preventDefault();
   if (ev.stopPropagation) ev.stopPropagation();
 
-  var dropX = ev.clientX;
+  var dropX = ev.clientX - dragMouseClickToTileCenterOffset;
 
   if(!ev.target.classList.contains("dropZone")) {
     dropZone = ev.target.closest(".dropZone");
@@ -218,7 +221,6 @@ function getElementCenterX(el) {
 
   return x + width / 2;
 }
-
 
 // Row Click Functions
 
@@ -404,7 +406,6 @@ function genTileToDrop(operatorTypeToInsert, tileValue) {
   return newTile;
 
 }
-
 
 // Tokenizing
 
@@ -680,9 +681,6 @@ function isRightParens(ch) {
 function isFactorial(ch) {
   return (ch === "!");
 }
-
-
-
 
 function clickPositionToConsole(ev, el) {
   console.log(`Click x-coord: ${ev.clientX}`);
