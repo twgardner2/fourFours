@@ -109,6 +109,10 @@ body {
 
 /* Grid Layout */
 
+/* .foursRow::before {
+  content: "button";
+} */
+
 .foursRow {
   display: grid;
   grid-gap: 2px 2px;
@@ -128,6 +132,8 @@ body {
   height: 150px;
   width: 720px;
 }
+
+
 
 .four1 {
   grid-area: four1;
@@ -187,7 +193,12 @@ body {
   grid-gap: 0px 10px;
   grid-template-columns: calc(0.05*var(--grid-binaryWidth)) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-binaryWidth) var(--grid-parensWidth) var(--grid-parensWidth) var(--grid-expWidth) var(--grid-expWidth) var(--grid-parensWidth);
   grid-template-rows: 0.1fr 0.5fr 1.0fr 0.5fr 0.1fr;
-  grid-template-areas: ".    .     .       .      .          .           .    .       .        " ".    .     .       .      parensOpen parensClose .    .       factorial" "plus minus multily divide parensOpen parensClose sqrt squared factorial" ".    .     .       .      parensOpen parensClose .    .       factorial" ".    .     .       .      .          .           .    .       .        ";
+  grid-template-areas:
+  ".    .     .       .      .          .           .    .       .        "
+  ".    .     .       .      parensOpen parensClose sqrt squared factorial"
+  "plus minus multily divide parensOpen parensClose sqrt squared factorial"
+  ".    .     .       .      parensOpen parensClose sqrt squared factorial"
+  ".    .     .       .      .          .           .    .       .        ";
 }
 
 .plusTileGrid {
@@ -477,13 +488,7 @@ vh; */
 
 .staticSymbol {
   color: var(--pri-color);
-  /* font-size: calc(0.7*var(--pri-height));
-  height: var(--pri-height);
-  width: var(--pri-width); */
   text-align: center;
-  /* position: relative; */
-  /* margin: 0.1em; */
-  /* border: 1px solid black; */
 }
 
 /* .staticSymbol p {
@@ -507,11 +512,12 @@ vh; */
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  border: 1px dashed #abc;
+  border: 1px dashed #1a1a1a;
   border-radius: 10px;
   transition: transform 200ms;
-
 }
+
+
 
 .draggable {
   border: 2px solid #1d1d1d;
