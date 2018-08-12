@@ -2,7 +2,6 @@
 /// Evaluation: prevent until at least 3 binary operators added
 /// Remove Bootstrap?
 
-
 var activeRow = 0;
 var activeRowId = "#foursRow0";
 
@@ -58,9 +57,11 @@ function handleDragEnd() {
 
   $(this).addClass('draggable').removeClass('duringDrag');
 
-  $('.droppedTile').css({'right' : '0px',
-                     'top' : '0px',
-                     'opacity' : '1'});
+  $('.droppedTile').css({
+    'right': '0px',
+    'top': '0px',
+    'opacity': '1'
+  });
 }
 
 function handleDragOver(e) {
@@ -79,7 +80,7 @@ function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
 
   // Find the dropZone node affected by this event and its children (any operators previously dropped or "occupants")
   var dropZoneNode;
-  if(ev.target.classList.contains('droppedTile')) {
+  if (ev.target.classList.contains('droppedTile')) {
     console.log();
     dropZoneNode = ev.target.parentNode;
   } else {
@@ -92,8 +93,8 @@ function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
   var numOccupantsOfDropZone = dropZoneNode.childNodes.length;
   var dropZoneWidth = dropZoneNode.clientWidth;
   var occupantsCenterOffset = [];
-  occupants.forEach( function(occupant, i) {
-    var occupantCenterOffset = (1/numOccupantsOfDropZone)*(0.5 + i) - 0.5;
+  occupants.forEach(function(occupant, i) {
+    var occupantCenterOffset = (1 / numOccupantsOfDropZone) * (0.5 + i) - 0.5;
     occupantsCenterOffset.push(occupantCenterOffset);
   });
 
@@ -115,9 +116,11 @@ function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
     console.log(`mouseOffset: ${mouseOffset}`);
     // console.log(`nudgeSine for Child: ${index}: ${nudgeSine(occupantsMouseOffset[index])}`);
     // console.log(-10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px');
-    $(occupant).css({'right' : -10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px',
-                     'top' : -5 * Math.abs(nudgeSine(occupantsMouseOffset[index] * 10)) + 'px',
-                     'opacity' : 1 - Math.abs(1.5 * Math.abs(nudgeSine(occupantsMouseOffset[index]))) });
+    $(occupant).css({
+      'right': -10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px',
+      'top': -5 * Math.abs(nudgeSine(occupantsMouseOffset[index] * 10)) + 'px',
+      'opacity': 1 - Math.abs(1.5 * Math.abs(nudgeSine(occupantsMouseOffset[index])))
+    });
   });
 
   // Function to return 1 period of a sine wave
@@ -150,7 +153,7 @@ function newDrop(ev, el) {
 
   var dropX = ev.clientX - dragMouseClickToTileCenterOffset;
 
-  if(!ev.target.classList.contains("dropZone")) {
+  if (!ev.target.classList.contains("dropZone")) {
     dropZone = ev.target.closest(".dropZone");
   } else {
     dropZone = ev.target;
@@ -182,7 +185,7 @@ function newDrop(ev, el) {
   numChildrenToRightOfDropX = childrenToRightOfDropX.length;
   // console.log(`length torightofdrop: ${childrenToRightOfDropX.length}`);
   // console.log(`el.children.length: ${dropZone.children.length}`);
-  nodeToInsertBefore = dropZone.children[ dropZone.children.length - numChildrenToRightOfDropX ];
+  nodeToInsertBefore = dropZone.children[dropZone.children.length - numChildrenToRightOfDropX];
   // dropZone.insertBefore(document.getElementById(data), el.children[el.children.length - numChildrenToRightOfDropX]);
 
   dropZone.insertBefore(newNode, nodeToInsertBefore);
@@ -299,8 +302,8 @@ function constructLHS() {
   var lhs = '';
   var children = document.getElementById(`foursRow${activeRow}`).childNodes;
   children.forEach(function(child) {
-    if(child.nodeName != "#text") {
-      if(child.classList.contains('dropZone')) {
+    if (child.nodeName != "#text") {
+      if (child.classList.contains('dropZone')) {
         var grandchildren = child.childNodes;
         grandchildren.forEach(function(grandchild) {
           lhs += grandchild.dataset.value;
@@ -338,13 +341,15 @@ function attachDragDropEventListeners() {
 
 
   // .droppedTile drag events
-  $('.dropZone').on('dragleave', '.droppedTile' , function(ev) { this.style.right =  "0px"; });
-  $('.dropZone').on('dragleave', '.droppedTile' , function(e) {
+  $('.dropZone').on('dragleave', '.droppedTile', function(ev) {
+    this.style.right = "0px";
+  });
+  $('.dropZone').on('dragleave', '.droppedTile', function(e) {
     e.target.classList.remove('droppedTileBeingDraggedOver');
   });
 
 
-  $('.dropZone').on('click', '.droppedTile' , clearOperatorByClickAndReevaluate);
+  $('.dropZone').on('click', '.droppedTile', clearOperatorByClickAndReevaluate);
 
   $('.four').on('click', negateFourByClickAndReevaluate);
 }
@@ -359,17 +364,17 @@ function insertRow() {
   $(activeRowId).addClass('disabled');
   activeRow++;
   activeRowId = `#foursRow${activeRow}`;
-  $('#operatorTiles').before(rowGenerator());
+  $('#operatorTiles').before(rowGenerator(activeRow));
   attachDragDropEventListeners();
 }
 
-function rowGenerator() {
+function rowGenerator(activeRow) {
 
   newRowHTML = `<div id="foursRow${activeRow}" class="row foursRow noResult"> ` +
 
     `${genDropZoneDiv("dropZone1")} ${genFourDiv("four1")} ${genDropZoneDiv("dropZone2")} ${genFourDiv("four2")} ${genDropZoneDiv("dropZone3")} ${genFourDiv("four3")} ${genDropZoneDiv("dropZone4")} ${genFourDiv("four4")} ${genDropZoneDiv("dropZone5")}` +
 
-    `${genEqualsDiv("equals")} ${genRequiredResultDiv("result")}` +
+    `${genEqualsDiv("equalsNotEquals")} ${genRequiredResultDiv("result", activeRow)}` +
 
     `</div>`;
 
@@ -381,15 +386,69 @@ function rowGenerator() {
 
   function genDropZoneDiv(gridPositionClass) {
     return `<div class="dropZone ${gridPositionClass}"></div>`;
-
   }
 
   function genEqualsDiv(gridPositionClass) {
     return `<div id="equalsOrEqualsNot${activeRow}" class="staticSymbol equalsNot ${gridPositionClass}" data-value="="></div>`;
   }
 
-  function genRequiredResultDiv(gridPositionClass) {
-    return `<div id="requiredResult" class="staticSymbol ${gridPositionClass}" data-value="${activeRow}"> ${activeRow} </div>`;
+  function genRequiredResultDiv(gridPositionClass, activeRow) {
+    var requiredResultHTML;
+    var requiredResultInnerDivsHTML = '';
+    var numDigitsInRequiredResult;
+
+    numDigitsInRequiredResult = activeRow.toString().length;
+
+    requiredResultHTML = `<div id="requiredResult" class="staticSymbol ${gridPositionClass}" data-value="${activeRow}">`
+
+    for (var i = 0; i < numDigitsInRequiredResult; i++) {
+      var digitToDisplay_string;
+      var digitToDisplay_className;
+      digitToDisplay_string = activeRow.toString().substring(i, i+1);
+
+      switch (digitToDisplay_string) {
+        case "0":
+          digitToDisplay_className = "zero";
+          break;
+        case "1":
+          digitToDisplay_className = "one";
+          break;
+        case "2":
+          digitToDisplay_className = "two";
+          break;
+        case "3":
+          digitToDisplay_className = "three";
+          break;
+        case "4":
+          digitToDisplay_className = "four";
+          break;
+        case "5":
+          digitToDisplay_className = "five";
+          break;
+        case "6":
+          digitToDisplay_className = "six";
+          break;
+        case "7":
+          digitToDisplay_className = "seven";
+          break;
+        case "8":
+          digitToDisplay_className = "eight";
+          break;
+        case "9":
+          digitToDisplay_className = "nine";
+          break;
+      }
+      console.log(requiredResultHTML);
+
+      requiredResultInnerDivsHTML += `<div class="resultDigit ${digitToDisplay_className}"> </div>`
+      console.log(requiredResultInnerDivsHTML);
+
+    }
+
+    requiredResultHTML += requiredResultInnerDivsHTML + '</div>';
+    console.log(requiredResultHTML);
+    return requiredResultHTML;
+
   }
 
 }
@@ -495,7 +554,7 @@ function tokenize(lhs) {
 
   });
 
-  if(numBuffer.length > 0) {
+  if (numBuffer.length > 0) {
     emptyNumBufferAsLiteral();
   }
 

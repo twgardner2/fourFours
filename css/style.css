@@ -165,12 +165,13 @@ body {
   grid-area: dropZone5;
 }
 
-.equals {
+.equalsNotEquals {
   grid-area: equals;
 }
 
 .result {
   grid-area: result;
+  display: flex;
 }
 
 #operatorTiles {
@@ -294,12 +295,55 @@ body {
   background-size: contain;
 }
 
+.zero {
+  background: url('../images/zero.png') no-repeat center center;
+  background-size: contain;
+}
+.one {
+  background: url('../images/one.png') no-repeat center center;
+  background-size: contain;
+}
+.two {
+  background: url('../images/two.png') no-repeat center center;
+  background-size: contain;
+}
+.three {
+  background: url('../images/three.png') no-repeat center center;
+  background-size: contain;
+}
+.four {
+  background: url('../images/four.png') no-repeat center center;
+  background-size: contain;
+}
+.five {
+  background: url('../images/five.png') no-repeat center center;
+  background-size: contain;
+}
+.six {
+  background: url('../images/six.png') no-repeat center center;
+  background-size: contain;
+}
+.seven {
+  background: url('../images/seven.png') no-repeat center center;
+  background-size: contain;
+}
+.eight {
+  background: url('../images/eight.png') no-repeat center center;
+  background-size: contain;
+}
+.nine {
+  background: url('../images/nine.png') no-repeat center center;
+  background-size: contain;
+}
 /* Sizing */
 
 .gameContainer {
   max-width: 720px;
 }
 
+.resultDigit {
+  flex: 1 1 auto;
+}
 /*       */
 
 div {
