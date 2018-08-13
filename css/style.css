@@ -109,10 +109,6 @@ body {
 
 /* Grid Layout */
 
-/* .foursRow::before {
-  content: "button";
-} */
-
 .foursRow {
   display: grid;
   grid-gap: 2px 2px;
@@ -123,7 +119,7 @@ body {
   ". dropZone1 four1 dropZone2 four2 dropZone3 four3 dropZone4 four4 dropZone5 equals result ."
   ". . . . . . . . . . . . .";
   overflow: hidden;
-  margin: 10px;
+  margin-bottom: 10px;
   /* padding: 15px; */
   border-radius: 10px;
   border: 2px solid #1d1d1d;
