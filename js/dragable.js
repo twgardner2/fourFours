@@ -257,9 +257,9 @@ function evalExpression() {
   var lhs = constructLHS();
 
   tokenizedExpression = tokenize(lhs);
-  // console.log('Tokenized Expression:');
-  // console.log(tokenizedExpression);
-  // console.log('\n');
+  console.log('Tokenized Expression:');
+  console.log(tokenizedExpression);
+  console.log('\n');
 
   rpn = parseTokenizedExpressionToRPN(tokenizedExpression);
   // console.log('Parsed Expression (RPN):');
@@ -300,7 +300,7 @@ function evalExpression() {
 
 function constructLHS() {
   var lhs = '';
-  var children = document.getElementById(`foursRow${activeRow}`).childNodes;
+  var children = document.querySelector(`#foursRow${activeRow} > .foursRow`).childNodes;
   children.forEach(function(child) {
     if (child.nodeName != "#text") {
       if (child.classList.contains('dropZone')) {
@@ -316,6 +316,7 @@ function constructLHS() {
   });
 
   lhs = lhs.replace(/\s/g, '').substring(0, lhs.indexOf("="));
+  console.log(lhs);
   return lhs;
 }
 
@@ -370,13 +371,19 @@ function insertRow() {
 
 function rowGenerator(activeRow) {
 
-  newRowHTML = `<div id="foursRow${activeRow}" class="row foursRow noResult"> ` +
+  newRowHTML = `<div id="foursRow${activeRow}" class="foursRowContainer noResult"> ` +
+
+    '<div class="skipButtons">New</div>' +
+
+    '<div class="foursRow">' + 
 
     `${genDropZoneDiv("dropZone1")} ${genFourDiv("four1")} ${genDropZoneDiv("dropZone2")} ${genFourDiv("four2")} ${genDropZoneDiv("dropZone3")} ${genFourDiv("four3")} ${genDropZoneDiv("dropZone4")} ${genFourDiv("four4")} ${genDropZoneDiv("dropZone5")}` +
 
     `${genEqualsDiv("equalsNotEquals")} ${genRequiredResultDiv("result", activeRow)}` +
 
-    `</div>`;
+    `</div>` +
+    
+    '</div>';
 
   return newRowHTML;
 

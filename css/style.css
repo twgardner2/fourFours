@@ -10,6 +10,15 @@
   --color-highlightDropZone: rgba(255, 255, 255, 1.0);
   --color-textShadow: #446688;
   --color-background: rgba(230, 230, 230, 1);
+
+  /* foursRowContainer */
+  --grid-foursRowContainer-padding: 0.05fr;
+  --grid-skipButtons-width: 1fr;
+  --grid-foursRow-width: 9fr;
+  --grid-foursRowContainer-height: 1fr;
+
+
+  /* foursRow */
   --grid-foursRow-outerPadding: 0.05fr;
   --grid-foursRow-dropZone: 1fr;
   --grid-foursRow-four: 0.5fr;
@@ -109,6 +118,21 @@ body {
 
 /* Grid Layout */
 
+.foursRowContainer {
+  display: grid;
+  grid-gap: 2px 2px;
+  grid-template-columns: var(--grid-foursRowContainer-padding) var(--grid-skipButtons-width) var(--grid-foursRow-width) var(--grid-foursRowContainer-padding);
+  grid-template-rows: var(--grid-foursRowContainer-padding) var(--grid-foursRowContainer-height) var(--grid-foursRowContainer-padding);
+  grid-template-areas: 
+  ".  .            .         ." 
+  ".  skipButtons  foursRow  ." 
+  ".  .            .         .";
+}
+
+.skipButtons {
+  grid-area: skipButtons;
+}
+
 .foursRow {
   display: grid;
   grid-gap: 2px 2px;
@@ -127,9 +151,9 @@ body {
   transition: background 200ms;
   height: 150px;
   width: 720px;
+
+  grid-area: foursRow;
 }
-
-
 
 .four1 {
   grid-area: four1;
