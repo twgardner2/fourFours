@@ -373,7 +373,13 @@ function rowGenerator(activeRow) {
 
   newRowHTML = `<div id="foursRow${activeRow}" class="foursRowContainer noResult"> ` +
 
-    '<div class="skipButtons">New</div>' +
+    '<div class="skipButtons">' +
+    
+    '<button>&#8631;</button>' +
+    
+    '<button>&#8677;</button>' +
+
+    '</div>' +
 
     '<div class="foursRow">' + 
 
