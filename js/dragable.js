@@ -20,7 +20,6 @@ $(document).ready(function() {
 
   $('#startButton').on('click', playButtonClick);
   // $('#buttonEval').on('click', evalExpression);
-  // $('#buttonReset').on('click', resetRow);
 
   attachDragDropEventListeners()
 
@@ -282,17 +281,25 @@ function evalExpression() {
   if (evaluatedRPN || evaluatedRPN === 0) {
 
     if (evaluatedRPN === activeRow) {
-      $(activeRowId).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
-      $(activeRowId).children().css('border-style', 'none');
+      // $(activeRowId).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
+      $(`${activeRowId} > .foursRow`).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
+
+      // $(activeRowId).children().css('border-style', 'none');
+      $(`${activeRowId} > .foursRow`).children().css('border-style', 'none');
+
       $(`#equalsOrEqualsNot${activeRow}`).removeClass('equalsNot').addClass('equals');
       insertRow();
     } else {
-      $(activeRowId).removeClass('noResult rightResult wrongResult tada horizontal').addClass('wrongResult horizontal');
+      // $(activeRowId).removeClass('noResult rightResult wrongResult tada horizontal').addClass('wrongResult horizontal');
+      $(`${activeRowId} > .foursRow`).removeClass('noResult rightResult wrongResult tada horizontal').addClass('wrongResult horizontal');
+
       $(`#equalsOrEqualsNot${activeRow}`).removeClass('equals').addClass('equalsNot');
     }
 
   } else {
-    $(activeRowId).removeClass('noResult rightResult wrongResult tada horizontal').addClass('noResult');
+    // $(activeRowId).removeClass('noResult rightResult wrongResult tada horizontal').addClass('noResult');
+    $(`${activeRowId} > .foursRow`).removeClass('noResult rightResult wrongResult tada horizontal').addClass('noResult');
+
 
   }
 
@@ -319,12 +326,6 @@ function constructLHS() {
   console.log(lhs);
   return lhs;
 }
-
-// function resetRow() {
-//   $('.dropZone').html('').removeClass('over').removeClass('dropped');
-//   $(activeRowId).removeClass('rightResult').removeClass('wrongResult');
-//
-// }
 
 function attachDragDropEventListeners() {
   // .dropZone drag events
@@ -355,33 +356,66 @@ function attachDragDropEventListeners() {
   $('.four').on('click', negateFourByClickAndReevaluate);
 }
 
+function attachSkipButtonListeners() {
+  var skipOneButtons = document.querySelectorAll('.skipOneButton');
+  skipOneButtons.forEach( function(button) {
+    button.addEventListener("click", function(){
+      insertRow();
+    });
+  });
+
+  // var jumpToNum = document.querySelectorAll(`input[email=jumpToNum${activeRow}]`).value;
+  // var inputElement = document.getElementById(`jumpToNum${activeRow}`);
+  // inputElement.focus();
+  // document.execCommand("SelectAll");
+  // var jumpToNum = window.getSelection().toString;
+  // console.log(`jumpToNum${activeRow}`);
+  var skipToNumButtons = document.querySelectorAll('.skipToNumButton');
+  // console.log(`jumpToNum: ${jumpToNum}`);
+  skipToNumButtons.forEach( function(button) {
+    button.addEventListener("click", function(jumpToNum) {
+      var jumpToNum = parseInt(document.getElementById(`jumpToNum${activeRow}`).value);
+      insertRow(newRowNum = parseInt(jumpToNum));
+
+    })
+  });
+}
+
 function playButtonClick() {
   insertRow();
   $(this).hide();
   $('#operatorTiles').show();
+  // document.getElementById("startButton").style.display = "none";
 }
 
-function insertRow() {
-  $(activeRowId).addClass('disabled');
-  activeRow++;
+function insertRow(newRowNum = null) {
+  if( document.getElementById(`foursRow${activeRow}`) ) {
+    document.getElementById(`foursRow${activeRow}`).classList.add('disabled');
+    var skipButtonElements = document.querySelectorAll('.skipButtons');
+    skipButtonElements.forEach( function(skipButtonElement) {
+      skipButtonElement.style.display = 'none';
+    });
+  }
+
+  if(newRowNum) {
+    activeRow = newRowNum
+  } else {
+    activeRow++;
+  }
+
   activeRowId = `#foursRow${activeRow}`;
   $('#operatorTiles').before(rowGenerator(activeRow));
   attachDragDropEventListeners();
+  attachSkipButtonListeners();
 }
 
 function rowGenerator(activeRow) {
 
-  newRowHTML = `<div id="foursRow${activeRow}" class="foursRowContainer noResult"> ` +
+  newRowHTML = `<div id="foursRow${activeRow}" class="foursRowContainer">` +
 
-    '<div class="skipButtons">' +
-    
-    '<button>&#8631;</button>' +
-    
-    '<button>&#8677;</button>' +
+    `<div class="skipButtons"> ${genSkipOneButton("&#8631;")} ${genSkipToNumButton("&#8677;")} </div>` + 
 
-    '</div>' +
-
-    '<div class="foursRow">' + 
+    '<div class="foursRow noResult">' + 
 
     `${genDropZoneDiv("dropZone1")} ${genFourDiv("four1")} ${genDropZoneDiv("dropZone2")} ${genFourDiv("four2")} ${genDropZoneDiv("dropZone3")} ${genFourDiv("four3")} ${genDropZoneDiv("dropZone4")} ${genFourDiv("four4")} ${genDropZoneDiv("dropZone5")}` +
 
@@ -392,6 +426,18 @@ function rowGenerator(activeRow) {
     '</div>';
 
   return newRowHTML;
+
+  function genSkipOneButton(utf8Code) {
+    return `<div class="skipButtonsElement"><button class="skipOneButton">${utf8Code}</button></div>`;
+  }
+
+  function genSkipToNumButton(utf8Code) {
+    var textInputVal = parseInt(activeRow) + parseInt(2);
+    return `<div class="skipButtonsElement">` + 
+      `<button class="skipToNumButton">${utf8Code}</button>` + 
+      `<form><input id="jumpToNum${activeRow}" name="jumpToNum${activeRow}" value="${textInputVal}" /></form>` + 
+    `</div>`;
+  }
 
   function genFourDiv(gridPositionClass) {
     return `<div class="staticSymbol four ${gridPositionClass}" data-value-default='4' data-value-negative='(0-4)' data-value="4"></div>`;
@@ -451,15 +497,15 @@ function rowGenerator(activeRow) {
           digitToDisplay_className = "nine";
           break;
       }
-      console.log(requiredResultHTML);
+      // console.log(requiredResultHTML);
 
       requiredResultInnerDivsHTML += `<div class="resultDigit ${digitToDisplay_className}"> </div>`
-      console.log(requiredResultInnerDivsHTML);
+      // console.log(requiredResultInnerDivsHTML);
 
     }
 
     requiredResultHTML += requiredResultInnerDivsHTML + '</div>';
-    console.log(requiredResultHTML);
+    // console.log(requiredResultHTML);
     return requiredResultHTML;
 
   }

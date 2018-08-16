@@ -13,7 +13,7 @@
 
   /* foursRowContainer */
   --grid-foursRowContainer-padding: 0.05fr;
-  --grid-skipButtons-width: 1fr;
+  --grid-skipButtons-width: 0.5fr;
   --grid-foursRow-width: 9fr;
   --grid-foursRowContainer-height: 1fr;
 
@@ -130,6 +130,23 @@ body {
 
 .skipButtons {
   grid-area: skipButtons;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.skipButtonsElement {
+  flex: 0 1 auto;
+}
+
+.skipButtons button {
+  border-radius: 5px;
+  width: 50px;
+}
+
+.skipButtonsElement input {
+  width: 50px;
 }
 
 .foursRow {
@@ -143,12 +160,11 @@ body {
   ". . . . . . . . . . . . .";
   overflow: hidden;
   margin-bottom: 10px;
-  /* padding: 15px; */
   border-radius: 10px;
   border: 2px solid #1d1d1d;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
   transition: background 200ms;
-  height: 125px;
+  height: 100px;
   /* width: 720px; */
 
   grid-area: foursRow;
@@ -200,13 +216,13 @@ body {
 }
 
 #operatorTiles {
-  margin: 10px;
-  padding: 15px;
+  /* margin: 10px; */
+  padding: 10px;
   background: var(--color-operatorTilesBackground);
   border-radius: 10px;
   border: 2px solid #1d1d1d;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
-  height: 100px;
+  height: 75px;
   width: 720px;
   display: grid;
   grid-gap: 0px 10px;
@@ -500,10 +516,6 @@ vh; */
 .noResult {
   background: var(--color-noResult);
 }
-
-/* .foursRow div {
-  margin-right: calc(0.1*var(--pri-width));
-} */
 
 .staticSymbol {
   color: var(--pri-color);
