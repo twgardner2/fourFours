@@ -206,8 +206,6 @@ function newDrop(ev, el) {
 
   // console.log(`X-position of Current Occupants of Drop Zone: ${currentOccupantsCenterX}`);
 
-
-
   isCorrect = evalExpression();
 
   return false;
@@ -270,7 +268,6 @@ function evalExpression() {
   // console.log(evaluatedRPN);
   // console.log('\n');
 
-
   tokenizedExpression = tokenizedExpression.map(el => el.value).join('');
   rpn = rpn.map(el => el.value).join('');
 
@@ -281,40 +278,35 @@ function evalExpression() {
   if (evaluatedRPN || evaluatedRPN === 0) {
 
     if (evaluatedRPN === activeRow) {
-      // $(activeRowId).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
-      $(`${activeRowId} > .foursRow`).removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
+      $('.foursRowContainer:not(.disabled) > .foursRow').removeClass('noResult wrongResult horizontal').addClass('rightResult tada');
 
-      // $(activeRowId).children().css('border-style', 'none');
-      $(`${activeRowId} > .foursRow`).children().css('border-style', 'none');
+      $('.foursRowContainer:not(.disabled) > .foursRow').children().css('border-style', 'none');
 
       $(`#equalsOrEqualsNot${activeRow}`).removeClass('equalsNot').addClass('equals');
       insertRow();
     } else {
-      // $(activeRowId).removeClass('noResult rightResult wrongResult tada horizontal').addClass('wrongResult horizontal');
-      $(`${activeRowId} > .foursRow`).removeClass('noResult rightResult wrongResult tada horizontal').addClass('wrongResult horizontal');
+      $('.foursRowContainer:not(.disabled) > .foursRow').removeClass('noResult rightResult wrongResult tada horizontal').addClass('wrongResult horizontal');
 
       $(`#equalsOrEqualsNot${activeRow}`).removeClass('equals').addClass('equalsNot');
     }
 
   } else {
-    // $(activeRowId).removeClass('noResult rightResult wrongResult tada horizontal').addClass('noResult');
-    $(`${activeRowId} > .foursRow`).removeClass('noResult rightResult wrongResult tada horizontal').addClass('noResult');
-
-
+    $('.foursRowContainer:not(.disabled) > .foursRow').removeClass('noResult rightResult wrongResult tada horizontal').addClass('noResult');
   }
-
 }
 
 function constructLHS() {
   var lhs = '';
-  var children = document.querySelector(`#foursRow${activeRow} > .foursRow`).childNodes;
+  var children = document.querySelector('.foursRowContainer:not(.disabled) > .foursRow').childNodes;
+
+  console.log(children);
   children.forEach(function(child) {
     if (child.nodeName != "#text") {
       if (child.classList.contains('dropZone')) {
         var grandchildren = child.childNodes;
         grandchildren.forEach(function(grandchild) {
           lhs += grandchild.dataset.value;
-          // console.log(lhs);
+          console.log(lhs);
         });
       } else {
         lhs += child.dataset.value;
@@ -375,6 +367,7 @@ function attachSkipButtonListeners() {
   skipToNumButtons.forEach( function(button) {
     button.addEventListener("click", function(jumpToNum) {
       var jumpToNum = parseInt(document.getElementById(`jumpToNum${activeRow}`).value);
+      console.log(jumpToNum);
       insertRow(newRowNum = parseInt(jumpToNum));
 
     })
@@ -458,7 +451,7 @@ function rowGenerator(activeRow) {
 
     numDigitsInRequiredResult = activeRow.toString().length;
 
-    requiredResultHTML = `<div id="requiredResult" class="staticSymbol ${gridPositionClass}" data-value="${activeRow}">`
+    requiredResultHTML = `<div class="staticSymbol ${gridPositionClass}" data-value="${activeRow}">`   // id="requiredResult" 
 
     for (var i = 0; i < numDigitsInRequiredResult; i++) {
       var digitToDisplay_string;
