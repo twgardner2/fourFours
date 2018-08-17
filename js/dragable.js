@@ -417,23 +417,25 @@ function updateRowValue(newRowNum = null) {
   var newResultDiv = genRequiredResultDiv("result", activeRow);
 
 var equalsDiv = targetRow.querySelector('div[data-value="="]');
-console.log(equalsDiv);
-  // resultDiv.setAttribute('data-value', activeRow);
-
   // Remove active row's result node
   oldResultDiv.parentNode.removeChild(oldResultDiv);
   // Add newly generated result div after the equals div
   //// equalsDiv.after(newResultDiv);
   equalsDiv.insertAdjacentHTML( 'afterend', newResultDiv );
+  console.log(document.querySelector('.foursRowContainer:not(.disabled) .skipToNumButton'));
+  document.querySelector('.foursRowContainer:not(.disabled) .skipToNumInput').value = activeRow + 1;
 
 
 }
 
 function rowGenerator(activeRow) {
+// "&#8631;"
+// "&#8677;"
 
   newRowHTML = `<div class="foursRowContainer">` +
 
-    `<div class="skipButtons"> ${genSkipOneButton("&#8631;")} ${genSkipToNumButton("&#8677;")} </div>` + 
+    // `<div class="skipButtons"> ${genSkipOneButton("+1")} ${genSkipToNumButton("Skip To")} </div>` + 
+    `<div class="skipButtons"> ${genSkipToNumButton("Skip To")} </div>` + 
 
     '<div class="foursRow noResult">' + 
 
@@ -452,7 +454,7 @@ function rowGenerator(activeRow) {
   }
 
   function genSkipToNumButton(utf8Code) {
-    var textInputVal = parseInt(activeRow) + parseInt(2);
+    var textInputVal = parseInt(activeRow) + parseInt(1);
     return `<div class="skipButtonsElement">` + 
       `<button class="skipToNumButton">${utf8Code}</button>` + 
       `<form><input id="jumpToNum${activeRow}" class="skipToNumInput" name="jumpToNum${activeRow}" value="${textInputVal}" /></form>` + 
