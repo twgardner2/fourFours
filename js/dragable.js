@@ -75,7 +75,7 @@ function handleDragOver(e) {
 
 function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
   ev.preventDefault();
-  console.log(' ');
+  // console.log(' ');
 
   // Find the dropZone node affected by this event and its children (any operators previously dropped or "occupants")
   var dropZoneNode;
@@ -111,8 +111,8 @@ function droppedTilesMoveAwayWhenDragZoneDraggedOver(ev) {
 
   // Update occupant style for desired effect
   occupants.forEach(function(occupant, index) {
-    console.log(`Mouse Position: ${ev.clientX}`);
-    console.log(`mouseOffset: ${mouseOffset}`);
+    // console.log(`Mouse Position: ${ev.clientX}`);
+    // console.log(`mouseOffset: ${mouseOffset}`);
     // console.log(`nudgeSine for Child: ${index}: ${nudgeSine(occupantsMouseOffset[index])}`);
     // console.log(-10 * nudgeSine(occupantsMouseOffset[index] * 10) + 'px');
     $(occupant).css({
@@ -301,14 +301,14 @@ function constructLHS() {
   var lhs = '';
   var children = document.querySelector('.foursRowContainer:not(.disabled) > .foursRow').childNodes;
 
-  console.log(children);
+  // console.log(children);
   children.forEach(function(child) {
     if (child.nodeName != "#text") {
       if (child.classList.contains('dropZone')) {
         var grandchildren = child.childNodes;
         grandchildren.forEach(function(grandchild) {
           lhs += grandchild.dataset.value;
-          console.log(lhs);
+          // console.log(lhs);
         });
       } else {
         lhs += child.dataset.value;
@@ -317,7 +317,7 @@ function constructLHS() {
   });
 
   lhs = lhs.replace(/\s/g, '').substring(0, lhs.indexOf("="));
-  console.log(lhs);
+  // console.log(lhs);
   return lhs;
 }
 
@@ -462,7 +462,8 @@ function rowGenerator(activeRow) {
   }
 
   function genFourDiv(gridPositionClass) {
-    return `<div class="staticSymbol four ${gridPositionClass}" data-value-default='4' data-value-negative='(0-4)' data-value="4"></div>`;
+    return `<div class="stat  text-align: center;
+    Symbol four ${gridPositionClass}" data-value-default='4' data-value-negative='(0-4)' data-value="4"></div>`;
   }
 
   function genDropZoneDiv(gridPositionClass) {
@@ -645,7 +646,7 @@ function tokenize(lhs) {
       numBuffer = [];
     }
   }
-  // console.log(result);
+  console.log(result);
 
   return result;
 }
@@ -713,7 +714,8 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
   });
 
   rpn = outputQueue.concat(stack.reverse());
-
+  
+  console.log(rpn);
   return rpn;
   // return rpn.map(token => token.value);
   //.join(" ");

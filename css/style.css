@@ -44,7 +44,7 @@
   grid-template-columns: var(--dropZone-width) var(--four-width) var(--dropZone-width) var(--four-width) var(--dropZone-width) var(--four-width) var(--dropZone-width) var(--four-width) var(--dropZone-width);
   grid-template-rows: 1fr;
   flex-direction: row;
-  */ flex-wrap: nowrap;
+  flex-wrap: nowrap;
   align-items: center;
   width: 600px;
   height: 70px;
@@ -98,14 +98,10 @@
 
 /* ^^^ CSS for newDrag Test ^^^ */
 
-* {
-  box-sizing: border-box;
-}
-
-@font-face {
+/* @font-face {
   font-family: "Computer Modern";
   src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunss.otf');
-}
+} */
 
 body {
   background: var(--color-background);
@@ -134,6 +130,7 @@ body {
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-end;
+  font-size: 12px;
 }
 
 .skipButtonsElement {
@@ -145,8 +142,10 @@ body {
   width: 50px;
 }
 
-.skipButtonsElement input {
+.skipButtons input {
   width: 50px;
+  text-align: center;
+
 }
 
 .foursRow {
