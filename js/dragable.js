@@ -282,7 +282,9 @@ function evalExpression() {
 
       $('.foursRowContainer:not(.disabled) > .foursRow').children().css('border-style', 'none');
 
-      $(`#equalsOrEqualsNot${activeRow}`).removeClass('equalsNot').addClass('equals');
+      // $(`#equalsOrEqualsNot${activeRow}`).removeClass('equalsNot').addClass('equals');
+      $(`.foursRowContainer:not(.disabled) div[data-value="="]`).removeClass('equalsNot').addClass('equals');
+
       insertRow();
     } else {
       $('.foursRowContainer:not(.disabled) > .foursRow').removeClass('noResult rightResult wrongResult tada horizontal').addClass('wrongResult horizontal');
@@ -352,23 +354,21 @@ function attachSkipButtonListeners() {
   var skipOneButtons = document.querySelectorAll('.skipOneButton');
   skipOneButtons.forEach( function(button) {
     button.addEventListener("click", function(){
-      insertRow();
+      // insertRow();
+      updateRowValue();
     });
   });
 
-  // var jumpToNum = document.querySelectorAll(`input[email=jumpToNum${activeRow}]`).value;
-  // var inputElement = document.getElementById(`jumpToNum${activeRow}`);
-  // inputElement.focus();
-  // document.execCommand("SelectAll");
-  // var jumpToNum = window.getSelection().toString;
-  // console.log(`jumpToNum${activeRow}`);
   var skipToNumButtons = document.querySelectorAll('.skipToNumButton');
   // console.log(`jumpToNum: ${jumpToNum}`);
   skipToNumButtons.forEach( function(button) {
     button.addEventListener("click", function(jumpToNum) {
-      var jumpToNum = parseInt(document.getElementById(`jumpToNum${activeRow}`).value);
+      // var jumpToNum = parseInt(document.getElementById(`jumpToNum${activeRow}`).value);
+      var jumpToNum = parseInt(document.querySelector('.foursRowContainer:not(.disabled) .skipToNumInput').value);
+
       console.log(jumpToNum);
-      insertRow(newRowNum = parseInt(jumpToNum));
+      // insertRow(newRowNum = parseInt(jumpToNum));
+      updateRowValue(newRowNum = parseInt(jumpToNum));
 
     })
   });
@@ -382,14 +382,16 @@ function playButtonClick() {
 }
 
 function insertRow(newRowNum = null) {
-  if( document.getElementById(`foursRow${activeRow}`) ) {
-    document.getElementById(`foursRow${activeRow}`).classList.add('disabled');
+  if( document.querySelector(`.foursRowContainer`) ) {
+
+    document.querySelector('.foursRowContainer:not(.disabled)').classList.add('disabled');
+
     var skipButtonElements = document.querySelectorAll('.skipButtons');
     skipButtonElements.forEach( function(skipButtonElement) {
       skipButtonElement.style.display = 'none';
     });
   }
-
+  
   if(newRowNum) {
     activeRow = newRowNum
   } else {
@@ -402,9 +404,34 @@ function insertRow(newRowNum = null) {
   attachSkipButtonListeners();
 }
 
+function updateRowValue(newRowNum = null) {
+
+  if(newRowNum) {
+    activeRow = newRowNum
+  } else {
+    activeRow++;
+  }
+
+  var targetRow = document.querySelector('.foursRowContainer:not(.disabled)');
+  var oldResultDiv = targetRow.querySelector('.foursRow > .result');
+  var newResultDiv = genRequiredResultDiv("result", activeRow);
+
+var equalsDiv = targetRow.querySelector('div[data-value="="]');
+console.log(equalsDiv);
+  // resultDiv.setAttribute('data-value', activeRow);
+
+  // Remove active row's result node
+  oldResultDiv.parentNode.removeChild(oldResultDiv);
+  // Add newly generated result div after the equals div
+  //// equalsDiv.after(newResultDiv);
+  equalsDiv.insertAdjacentHTML( 'afterend', newResultDiv );
+
+
+}
+
 function rowGenerator(activeRow) {
 
-  newRowHTML = `<div id="foursRow${activeRow}" class="foursRowContainer">` +
+  newRowHTML = `<div class="foursRowContainer">` +
 
     `<div class="skipButtons"> ${genSkipOneButton("&#8631;")} ${genSkipToNumButton("&#8677;")} </div>` + 
 
@@ -428,7 +455,7 @@ function rowGenerator(activeRow) {
     var textInputVal = parseInt(activeRow) + parseInt(2);
     return `<div class="skipButtonsElement">` + 
       `<button class="skipToNumButton">${utf8Code}</button>` + 
-      `<form><input id="jumpToNum${activeRow}" name="jumpToNum${activeRow}" value="${textInputVal}" /></form>` + 
+      `<form><input id="jumpToNum${activeRow}" class="skipToNumInput" name="jumpToNum${activeRow}" value="${textInputVal}" /></form>` + 
     `</div>`;
   }
 
@@ -444,64 +471,64 @@ function rowGenerator(activeRow) {
     return `<div id="equalsOrEqualsNot${activeRow}" class="staticSymbol equalsNot ${gridPositionClass}" data-value="="></div>`;
   }
 
-  function genRequiredResultDiv(gridPositionClass, activeRow) {
-    var requiredResultHTML;
-    var requiredResultInnerDivsHTML = '';
-    var numDigitsInRequiredResult;
+}
 
-    numDigitsInRequiredResult = activeRow.toString().length;
+function genRequiredResultDiv(gridPositionClass, activeRow) {
+  var requiredResultHTML;
+  var requiredResultInnerDivsHTML = '';
+  var numDigitsInRequiredResult;
 
-    requiredResultHTML = `<div class="staticSymbol ${gridPositionClass}" data-value="${activeRow}">`   // id="requiredResult" 
+  numDigitsInRequiredResult = activeRow.toString().length;
 
-    for (var i = 0; i < numDigitsInRequiredResult; i++) {
-      var digitToDisplay_string;
-      var digitToDisplay_className;
-      digitToDisplay_string = activeRow.toString().substring(i, i+1);
+  requiredResultHTML = `<div class="staticSymbol ${gridPositionClass}" data-value="${activeRow}">`   // id="requiredResult" 
 
-      switch (digitToDisplay_string) {
-        case "0":
-          digitToDisplay_className = "zero";
-          break;
-        case "1":
-          digitToDisplay_className = "one";
-          break;
-        case "2":
-          digitToDisplay_className = "two";
-          break;
-        case "3":
-          digitToDisplay_className = "three";
-          break;
-        case "4":
-          digitToDisplay_className = "four";
-          break;
-        case "5":
-          digitToDisplay_className = "five";
-          break;
-        case "6":
-          digitToDisplay_className = "six";
-          break;
-        case "7":
-          digitToDisplay_className = "seven";
-          break;
-        case "8":
-          digitToDisplay_className = "eight";
-          break;
-        case "9":
-          digitToDisplay_className = "nine";
-          break;
-      }
-      // console.log(requiredResultHTML);
+  for (var i = 0; i < numDigitsInRequiredResult; i++) {
+    var digitToDisplay_string;
+    var digitToDisplay_className;
+    digitToDisplay_string = activeRow.toString().substring(i, i+1);
 
-      requiredResultInnerDivsHTML += `<div class="resultDigit ${digitToDisplay_className}"> </div>`
-      // console.log(requiredResultInnerDivsHTML);
-
+    switch (digitToDisplay_string) {
+      case "0":
+        digitToDisplay_className = "zero";
+        break;
+      case "1":
+        digitToDisplay_className = "one";
+        break;
+      case "2":
+        digitToDisplay_className = "two";
+        break;
+      case "3":
+        digitToDisplay_className = "three";
+        break;
+      case "4":
+        digitToDisplay_className = "four";
+        break;
+      case "5":
+        digitToDisplay_className = "five";
+        break;
+      case "6":
+        digitToDisplay_className = "six";
+        break;
+      case "7":
+        digitToDisplay_className = "seven";
+        break;
+      case "8":
+        digitToDisplay_className = "eight";
+        break;
+      case "9":
+        digitToDisplay_className = "nine";
+        break;
     }
-
-    requiredResultHTML += requiredResultInnerDivsHTML + '</div>';
     // console.log(requiredResultHTML);
-    return requiredResultHTML;
+
+    requiredResultInnerDivsHTML += `<div class="resultDigit ${digitToDisplay_className}"> </div>`
+    // console.log(requiredResultInnerDivsHTML);
 
   }
+
+  requiredResultHTML += requiredResultInnerDivsHTML + '</div>';
+  // console.log(requiredResultHTML);
+  return requiredResultHTML;
 
 }
 
