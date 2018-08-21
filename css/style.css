@@ -34,7 +34,7 @@
 
 /* CSS for newDrag Test */
 
-:root {
+/* :root {
   --four-width: 1fr;
   --dropZone-width: 5fr;
 }
@@ -51,9 +51,8 @@
   padding: 2px;
   border: 1px solid black;
   min-height: 0;
-  /* NEW */
   min-width: 0;
-}
+} */
 
 .fourDiv {
   flex-basis: auto;
