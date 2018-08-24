@@ -1,5 +1,5 @@
 // To Do:
-/// Evaluation: prevent until at least 3 binary operators added
+/// Evaluation: prevent until at least 3 binary operators added?
 /// Remove Bootstrap?
 
 var activeRow = 0;
@@ -247,7 +247,6 @@ function negateFourByClickAndReevaluate() {
 // Evaluation
 
 function evalExpression() {
-  // console.log(`running 'evalExpression'...activeRowId: ${activeRowId}`);
 
   var requiredResult = null;
   var isCorrect = null;
@@ -558,6 +557,7 @@ function Token(type, value) {
 function tokenize(lhs) {
   var result = [];
   var numBuffer = [];
+  var parensBuffer = [];
   var prevCharRightParens = false;
   // Remove whitespaces
   lhs.replace(/\s+/g, "");
@@ -583,8 +583,11 @@ function tokenize(lhs) {
 
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
+      } else if (parensBuffer.length) {
+        parensBuffer.push(char);
+      } else {
+        numBuffer.push(char);
       }
-      numBuffer.push(char);
       prevCharRightParens = false;
 
     } else if (char === ".") {
@@ -615,7 +618,8 @@ function tokenize(lhs) {
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
       }
-      result.push(new Token('LeftParens', char));
+      //result.push(new Token('LeftParens', char));
+      parensBuffer.push(char)
 
     } else if (isRightParens(char)) {
       // console.log(`token is right parens`);
@@ -646,6 +650,11 @@ function tokenize(lhs) {
       numBuffer = [];
     }
   }
+<<<<<<< Updated upstream
+  console.log('LHS:')
+=======
+  console.log('Tokenized Expression:')
+>>>>>>> Stashed changes
   console.log(result);
 
   return result;
@@ -714,7 +723,7 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
   });
 
   rpn = outputQueue.concat(stack.reverse());
-  
+  console.log('RPN Expression:');
   console.log(rpn);
   return rpn;
   // return rpn.map(token => token.value);
