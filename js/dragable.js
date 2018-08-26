@@ -567,7 +567,7 @@ function tokenize(lhs) {
   // console.log(lhs);
 
   lhs.forEach(function(char, i) {
-    // console.log(`Token: ${char}`);
+    console.log(`Token: ${char}`);
 
     // 'B' is a break character to prevent evaluation
     if (char === "B") {
@@ -596,12 +596,17 @@ function tokenize(lhs) {
 
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
+      } else if (parensBuffer.length) {
+        parensBuffer.push(char);
+      } else if (numBuffer.length) {
+        numBuffer.push(char);
       }
-      numBuffer.push(char);
       prevCharRightParens = false;
 
     } else if (isOperator(char)) {
-      if (numBuffer.length) {
+      if (parensBuffer.length) {
+        parensBuffer.push(char);
+      } else if (numBuffer.length) {
         emptyNumBufferAsLiteral();
         prevCharRightParens = false;
       }
@@ -609,7 +614,9 @@ function tokenize(lhs) {
       prevCharRightParens = false;
 
     } else if (isLeftParens(char)) {
-      if (numBuffer.length) {
+      if (parensBuffer.length) {
+        parensBuffer.push(char);
+      } else if (numBuffer.length) {
         emptyNumBufferAsLiteral();
         // console.log('PUSH A MULTIPLICATION');
         result.push(new Token('Operator', '*'));
@@ -619,29 +626,46 @@ function tokenize(lhs) {
         prevCharRightParens = false;
       }
       //result.push(new Token('LeftParens', char));
-      parensBuffer.push(char)
+      parensBuffer.push(char);
 
-    } else if (isRightParens(char)) {
+    } else if (isRightParens(char)) {  // == STOPPED HERE == //
       // console.log(`token is right parens`);
-      if (numBuffer.length) {
-        emptyNumBufferAsLiteral();
+
+      if (parensBuffer.length === 0) {
+        result.push(new Token('Break', 'B'));
+      } else {
+
+        parensBuffer.push(char);
+        var parensAreClosed = checkIfParensClosed(parensBuffer);
+
+        if (parensAreClosed) {
+          emptyParensBufferAsToken();
+        } 
       }
-      result.push(new Token('RightParens', char));
-      prevCharRightParens = true;
+
 
     } else if (isFactorial(char)) {
       console.log(`token is factorial`);
       if (numBuffer.length) {
         emptyNumBufferAsLiteral();
       }
-      result.push(new Token('Factorial', char));
+
+      if (parensBuffer.length) {
+        parensBuffer.push(char);
+      } else {
+        result.push(new Token('Factorial', char));
+      }
       prevCharRightParens = false;
     }
 
   });
 
-  if (numBuffer.length > 0) {
+  if (numBuffer.length) {
     emptyNumBufferAsLiteral();
+  }
+
+  if (parensBuffer.length) {
+    emptyParensBufferAsToken();
   }
 
   function emptyNumBufferAsLiteral() {
@@ -650,11 +674,32 @@ function tokenize(lhs) {
       numBuffer = [];
     }
   }
-<<<<<<< Updated upstream
-  console.log('LHS:')
-=======
+
+  function emptyParensBufferAsToken() {
+    if(parensBuffer.length) {
+      result.push(new Token('Parenthetical', parensBuffer.join('')));
+      parensBuffer = [];
+      prevCharRightParens = true;
+    }
+  }
+
+  function checkIfParensClosed(parensBuffer) {
+    var numOpenParens = 0;
+    
+    parensBuffer.forEach( function(char) {
+      if (isLeftParens(char)) numOpenParens++;
+      if (isRightParens(char)) numOpenParens--;
+    });
+
+    if (numOpenParens > 0) {
+      return false;
+    } else {
+      return true;
+    }
+
+  }
+
   console.log('Tokenized Expression:')
->>>>>>> Stashed changes
   console.log(result);
 
   return result;
