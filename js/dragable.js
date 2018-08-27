@@ -316,7 +316,8 @@ function constructLHS() {
   });
 
   lhs = lhs.replace(/\s/g, '').substring(0, lhs.indexOf("="));
-  // console.log(lhs);
+  console.log("LHS: ");
+  console.log(lhs);
   return lhs;
 }
 
@@ -576,7 +577,7 @@ function tokenize(lhs) {
       result.push(new Token('Break', 'B'));
 
     } else if (isDigit(char)) {
-      // console.log('char is digit');
+      console.log('char is digit');
 
       if (prevCharRightParens) {
         // console.log('PUSH A MULTIPLICATION');
@@ -687,16 +688,14 @@ function tokenize(lhs) {
     var numOpenParens = 0;
     
     parensBuffer.forEach( function(char) {
-      if (isLeftParens(char)) numOpenParens++;
-      if (isRightParens(char)) numOpenParens--;
+      if (isLeftParens(char)) {
+        numOpenParens++;
+      } else {
+        if (isRightParens(char)) numOpenParens--;
+      }
     });
 
-    if (numOpenParens > 0) {
-      return false;
-    } else {
-      return true;
-    }
-
+    return numOpenParens ? false : true
   }
 
   console.log('Tokenized Expression:')
