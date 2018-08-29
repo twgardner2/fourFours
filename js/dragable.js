@@ -584,6 +584,7 @@ function tokenize(lhs) {
 
         result.push(new Token('Operator', '*'));
         prevCharRightParens = false;
+        numBuffer.push(char);
       } else if (parensBuffer.length) {
         parensBuffer.push(char);
       } else {
@@ -607,28 +608,39 @@ function tokenize(lhs) {
     } else if (isOperator(char)) {
       if (parensBuffer.length) {
         parensBuffer.push(char);
+        prevCharRightParens = false;
       } else if (numBuffer.length) {
         emptyNumBufferAsLiteral();
+        result.push(new Token('Operator', char));
+        prevCharRightParens = false;
+      } else {
+        result.push(new Token('Operator', char));
         prevCharRightParens = false;
       }
-      result.push(new Token('Operator', char));
-      prevCharRightParens = false;
 
     } else if (isLeftParens(char)) {
       if (parensBuffer.length) {
-        parensBuffer.push(char);
+        if(prevCharRightParens) {
+          parensBuffer.push('*');
+          parensBuffer.push(char);
+        } else {
+          parensBuffer.push(char);
+        }
       } else if (numBuffer.length) {
         emptyNumBufferAsLiteral();
         // console.log('PUSH A MULTIPLICATION');
         result.push(new Token('Operator', '*'));
-      } else if (prevCharRightParens) {
-        // console.log('PUSH A MULTIPLICATION');
-        result.push(new Token('Operator', '*'));
-        prevCharRightParens = false;
+        parensBuffer.push(char);
+      } else {
+        parensBuffer.push(char);
       }
+      // } else if (prevCharRightParens) {
+      //   // console.log('PUSH A MULTIPLICATION');
+      //   result.push(new Token('Operator', '*'));
+      // }
       //result.push(new Token('LeftParens', char));
-      parensBuffer.push(char);
-
+      // parensBuffer.push(char);
+      prevCharRightParens = false;
     } else if (isRightParens(char)) {  // == STOPPED HERE == //
       // console.log(`token is right parens`);
 
@@ -667,6 +679,8 @@ function tokenize(lhs) {
 
   if (parensBuffer.length) {
     emptyParensBufferAsToken();
+    result.push(new Token('Break', 'B'));
+
   }
 
   function emptyNumBufferAsLiteral() {
