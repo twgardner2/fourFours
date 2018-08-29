@@ -577,7 +577,7 @@ function tokenize(lhs) {
       result.push(new Token('Break', 'B'));
 
     } else if (isDigit(char)) {
-      console.log('char is digit');
+      // console.log('char is digit');
 
       if (prevCharRightParens) {
         // console.log('PUSH A MULTIPLICATION');
@@ -775,6 +775,18 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
       stack.pop();
     } else if (t.type === "Factorial") {
       outputQueue.push(t);
+    } else if (t.type == "Parenthetical") {
+      // Strip outside parens
+      var insideParen; 
+      insideParens = t.value.substring(1, t.value.length).substring(0, t.value.length-2);
+      // console.log('insideParens');
+      // console.log(insideParens);
+
+      // Re-tokenize
+      var tokenizedParenthetical = tokenize(insideParens);
+      console.log('tokenized parenthetical:');
+      console.log(tokenizedParenthetical);
+
     } else if (t.type === "Break") {
       outputQueue.push(t);
     }
