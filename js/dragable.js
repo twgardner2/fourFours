@@ -262,6 +262,11 @@ function evalExpression() {
   // console.log(rpn);
   // console.log('\n');
 
+////////////////////////
+// add recursion here //
+// while loop conditional on whether any token is type Parenthetical?
+////////////////////////
+
   evaluatedRPN = evaluateRPN(rpn);
   // console.log('Result of evaluating RPN:');
   // console.log(evaluatedRPN);
@@ -776,16 +781,18 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
     } else if (t.type === "Factorial") {
       outputQueue.push(t);
     } else if (t.type == "Parenthetical") {
-      // Strip outside parens
-      var insideParen; 
-      insideParens = t.value.substring(1, t.value.length).substring(0, t.value.length-2);
-      // console.log('insideParens');
-      // console.log(insideParens);
+      // // Strip outside parens
+      // var insideParen; 
+      // insideParens = t.value.substring(1, t.value.length).substring(0, t.value.length-2);
+      // // console.log('insideParens');
+      // // console.log(insideParens);
 
-      // Re-tokenize
-      var tokenizedParenthetical = tokenize(insideParens);
-      console.log('tokenized parenthetical:');
-      console.log(tokenizedParenthetical);
+      // // Re-tokenize
+      // var tokenizedParenthetical = tokenize(insideParens);
+      // console.log('tokenized parenthetical:');
+      // console.log(tokenizedParenthetical);
+
+      outputQueue.push(t);
 
     } else if (t.type === "Break") {
       outputQueue.push(t);
