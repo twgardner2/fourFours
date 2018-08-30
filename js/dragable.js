@@ -265,6 +265,23 @@ function evalExpression() {
 ////////////////////////
 // add recursion here //
 // while loop conditional on whether any token is type Parenthetical?
+  var arrayOfParentheticalIndices = rpn.map(function(token, index) {
+    return (token.type==="Parenthetical") ? index : -1; 
+  }).filter(function(arrayElement) {
+    return arrayElement >= 0; 
+  });
+console.log(`arrayOfParentheticalIndices: ${arrayOfParentheticalIndices}`);
+
+for (var i = 0; i < arrayOfParentheticalIndices.length; i++) {
+  console.log(arrayOfParentheticalIndices[i]);
+}
+
+// var numParentheticalsInRPN = rpn.reduce(function(accumulator, t) {
+//   return accumulator + t;
+// });
+// console.log(`numParentheticalsInRPN: ${numParentheticalsInRPN}`);
+
+
 ////////////////////////
 
   evaluatedRPN = evaluateRPN(rpn);
