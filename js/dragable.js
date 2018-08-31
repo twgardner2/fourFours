@@ -272,30 +272,65 @@ function evalExpression() {
   });
 console.log(`arrayOfParentheticalIndices: ${arrayOfParentheticalIndices}`);
 
-for (var i = 0; i < arrayOfParentheticalIndices.length; i++) {
-  var indexToProcess = arrayOfParentheticalIndices[i];
-  var tokenToProcess = rpn[indexToProcess].value;
-  tokenToProcess = tokenToProcess.substring(1, tokenToProcess.length);
-  tokenToProcess = tokenToProcess.substring(0, tokenToProcess.length - 1);
-  // console.log(tokenToProcess);
+while (arrayOfParentheticalIndices.length > 0) {
+  console.log(`While Looping - arrayOfParentheticalIndices: ${arrayOfParentheticalIndices}`);
+  for (var i = 0; i < arrayOfParentheticalIndices.length; i++) {
+    var indexToProcess = arrayOfParentheticalIndices[i];
+    var tokenToProcess = rpn[indexToProcess].value;
+    tokenToProcess = tokenToProcess.substring(1, tokenToProcess.length);
+    tokenToProcess = tokenToProcess.substring(0, tokenToProcess.length - 1);
+    // console.log(tokenToProcess);
 
-  var tokenizedParensToken = tokenize(tokenToProcess);
-  console.log(tokenizedParensToken);
-  var rpnParensToken = parseTokenizedExpressionToRPN(tokenizedParensToken);
-  console.log(rpnParensToken);
+    var tokenizedParensToken = tokenize(tokenToProcess);
+    console.log('Tokenized Parens Expression:');
+    console.log(tokenizedParensToken);
+    var rpnParensToken = parseTokenizedExpressionToRPN(tokenizedParensToken);
+    console.log('RPNified Parens Expression:');
+    console.log(rpnParensToken);
 
-  rpn.splice(indexToProcess, 1, ...rpnParensToken);
+    rpn.splice(indexToProcess, 1, ...rpnParensToken);
+  }
+  console.log(`rpn double processed:`);
+  console.log(` ${rpn}`);
+
+  arrayOfParentheticalIndices = rpn.map(function(token, index) {
+    return (token.type==="Parenthetical") ? index : -1; 
+  }).filter(function(arrayElement) {
+    return arrayElement >= 0; 
+  });
+
 }
-console.log(`rpn double processed:`);
-console.log(` ${rpn}`);
-
-// var numParentheticalsInRPN = rpn.reduce(function(accumulator, t) {
-//   return accumulator + t;
-// });
-// console.log(`numParentheticalsInRPN: ${numParentheticalsInRPN}`);
-
 
 ////////////////////////
+if(true){
+// // add recursion here //
+// // while loop conditional on whether any token is type Parenthetical?
+// var arrayOfParentheticalIndices = rpn.map(function(token, index) {
+//   return (token.type==="Parenthetical") ? index : -1; 
+// }).filter(function(arrayElement) {
+//   return arrayElement >= 0; 
+// });
+// console.log(`arrayOfParentheticalIndices: ${arrayOfParentheticalIndices}`);
+
+// for (var i = 0; i < arrayOfParentheticalIndices.length; i++) {
+// var indexToProcess = arrayOfParentheticalIndices[i];
+// var tokenToProcess = rpn[indexToProcess].value;
+// tokenToProcess = tokenToProcess.substring(1, tokenToProcess.length);
+// tokenToProcess = tokenToProcess.substring(0, tokenToProcess.length - 1);
+// // console.log(tokenToProcess);
+
+// var tokenizedParensToken = tokenize(tokenToProcess);
+// console.log(tokenizedParensToken);
+// var rpnParensToken = parseTokenizedExpressionToRPN(tokenizedParensToken);
+// console.log(rpnParensToken);
+
+// rpn.splice(indexToProcess, 1, ...rpnParensToken);
+// }
+// console.log(`rpn double processed:`);
+// console.log(` ${rpn}`);
+}
+
+// ////////////////////////
 
   evaluatedRPN = evaluateRPN(rpn);
   // console.log('Result of evaluating RPN:');
@@ -351,8 +386,9 @@ function constructLHS() {
   });
 
   lhs = lhs.replace(/\s/g, '').substring(0, lhs.indexOf("="));
-  console.log("LHS: ");
+  console.log("\n=====LHS:===== ");
   console.log(lhs);
+  console.log('\n');
   return lhs;
 }
 
@@ -401,7 +437,7 @@ function attachSkipButtonListeners() {
       // var jumpToNum = parseInt(document.getElementById(`jumpToNum${activeRow}`).value);
       var jumpToNum = parseInt(document.querySelector('.foursRowContainer:not(.disabled) .skipToNumInput').value);
 
-      console.log(jumpToNum);
+      // console.log(jumpToNum);
       // insertRow(newRowNum = parseInt(jumpToNum));
       updateRowValue(newRowNum = parseInt(jumpToNum));
 
@@ -457,7 +493,6 @@ var equalsDiv = targetRow.querySelector('div[data-value="="]');
   // Add newly generated result div after the equals div
   //// equalsDiv.after(newResultDiv);
   equalsDiv.insertAdjacentHTML( 'afterend', newResultDiv );
-  console.log(document.querySelector('.foursRowContainer:not(.disabled) .skipToNumButton'));
   document.querySelector('.foursRowContainer:not(.disabled) .skipToNumInput').value = activeRow + 1;
 
 
@@ -591,6 +626,7 @@ function Token(type, value) {
 }
 
 function tokenize(lhs) {
+  console.log(`Tokenizing: ${lhs}`);
   var result = [];
   var numBuffer = [];
   var parensBuffer = [];
@@ -603,7 +639,7 @@ function tokenize(lhs) {
   // console.log(lhs);
 
   lhs.forEach(function(char, i) {
-    console.log(`Token: ${char}`);
+    // console.log(`Token: ${char}`);
 
     // 'B' is a break character to prevent evaluation
     if (char === "B") {
@@ -693,7 +729,7 @@ function tokenize(lhs) {
 
 
     } else if (isFactorial(char)) {
-      console.log(`token is factorial`);
+      // console.log(`token is factorial`);
       if (numBuffer.length) {
         emptyNumBufferAsLiteral();
       }
@@ -747,8 +783,8 @@ function tokenize(lhs) {
     return numOpenParens ? false : true
   }
 
-  console.log('Tokenized Expression:')
-  console.log(result);
+  // console.log('Tokenized Expression:')
+  // console.log(result);
 
   return result;
 }
@@ -940,6 +976,6 @@ function isFactorial(ch) {
   return (ch === "!");
 }
 
-function clickPositionToConsole(ev, el) {
-  console.log(`Click x-coord: ${ev.clientX}`);
-}
+// function clickPositionToConsole(ev, el) {
+//   console.log(`Click x-coord: ${ev.clientX}`);
+// }
