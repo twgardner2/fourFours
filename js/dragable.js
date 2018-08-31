@@ -273,8 +273,21 @@ function evalExpression() {
 console.log(`arrayOfParentheticalIndices: ${arrayOfParentheticalIndices}`);
 
 for (var i = 0; i < arrayOfParentheticalIndices.length; i++) {
-  console.log(arrayOfParentheticalIndices[i]);
+  var indexToProcess = arrayOfParentheticalIndices[i];
+  var tokenToProcess = rpn[indexToProcess].value;
+  tokenToProcess = tokenToProcess.substring(1, tokenToProcess.length);
+  tokenToProcess = tokenToProcess.substring(0, tokenToProcess.length - 1);
+  // console.log(tokenToProcess);
+
+  var tokenizedParensToken = tokenize(tokenToProcess);
+  console.log(tokenizedParensToken);
+  var rpnParensToken = parseTokenizedExpressionToRPN(tokenizedParensToken);
+  console.log(rpnParensToken);
+
+  rpn.splice(indexToProcess, 1, ...rpnParensToken);
 }
+console.log(`rpn double processed:`);
+console.log(` ${rpn}`);
 
 // var numParentheticalsInRPN = rpn.reduce(function(accumulator, t) {
 //   return accumulator + t;
@@ -817,8 +830,8 @@ function parseTokenizedExpressionToRPN(tokenizedExpression) {
   });
 
   rpn = outputQueue.concat(stack.reverse());
-  console.log('RPN Expression:');
-  console.log(rpn);
+  // console.log('RPN Expression:');
+  // console.log(rpn);
   return rpn;
   // return rpn.map(token => token.value);
   //.join(" ");
